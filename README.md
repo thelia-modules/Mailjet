@@ -20,6 +20,5 @@ There is two ways to install the mailjet module:
 }
 ```
     
-Then go to the configuration, give your API key and secret, you can let the webservice address at its default value,
-then entre the your mailing list name (the 'xxxxxx') into the 4th field.
+Then go to the configuration panel, give your API key and secret. You can leave the webservice address as its default value. Then enter your mailing list name (the 'xxxxxx') into the 4th field.
 Save and you're done !
