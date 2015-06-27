@@ -26,11 +26,6 @@ use Thelia\Tools\URL;
  */
 class MailjetConfigController extends BaseAdminController
 {
-    public function showAction()
-    {
-        return $this->render("mailjet-configuration");
-    }
-
     public function saveAction()
     {
         $baseForm = new MailjetConfigurationForm($this->getRequest());
