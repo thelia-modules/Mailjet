@@ -1,0 +1,115 @@
+<div class="modal fade" id="mailjet-failed" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>{intl d='mailjet.ai' l="An error occured"}</h3>
+            </div>
+            <div class="modal-body" id="mailjet-failed-body">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="general-block-decorator">
+    <div class="row">
+
+        <div class="col-md-12 title title-without-tabs">
+            {intl l='Edit your mailjet configuration.'}
+        </div>
+
+        <div class="form-container">
+            <div class="col-md-12">
+
+            {form name="mailjet.configuration.form"}
+                <form method="POST" id="mailjet-form" action="{url path="/admin/module/mailjet/save"}" {form_enctype form=$form} class="clearfix">
+
+                        {form_hidden_fields form=$form}
+
+                        {form_field form=$form field="api_key"}
+                            <div class="form-group {if $error}has-error{/if}">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="{$label_attr.for}">
+                                            {$label}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        {if $error}<span class="help-block">{$message}</span>{/if}
+                                        <input type="text" class="form-control" id="{$label_attr.for}" name="{$name}" value="{$value}" />
+                                    </div>
+                                </div>
+                            </div>
+                        {/form_field}
+
+                        {form_field form=$form field="api_secret"}
+                            <div class="form-group {if $error}has-error{/if}">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="{$label_attr.for}">
+                                            {$label}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        {if $error}<span class="help-block">{$message}</span>{/if}
+                                        <input type="text" class="form-control" id="{$label_attr.for}" name="{$name}" value="{$value}" />
+                                    </div>
+                                </div>
+                            </div>
+                        {/form_field}
+
+                        {form_field form=$form field="ws_address"}
+                            <div class="form-group {if $error}has-error{/if}">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="{$label_attr.for}">
+                                            {$label}
+                                        </label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        {if $error}<span class="help-block">{$message}</span>{/if}
+                                        <input type="text" class="form-control" id="{$label_attr.for}" name="{$name}" value="{$value}" />
+                                    </div>
+                                </div>
+                            </div>
+                        {/form_field}
+
+                        {form_field form=$form field="newsletter_list"}
+                            <div class="form-group {if $error}has-error{/if}">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label for="{$label_attr.for}">
+                                            {$label}
+                                            <a href="#{$label_attr.for}"
+                                               class="link tooltip-link"
+                                               data-toggle="tooltip"
+                                               data-original-title="{intl l="This value is the name of your list mail address (example: the 'xxxxxx' of xxxxxx@lists.mailjet.com)" d="mailjet.bo.default"}">
+                                                ?
+                                            </a>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-9">
+                                        {if $error}<span class="help-block">{$message}</span>{/if}
+                                        <input type="text" class="form-control" id="{$label_attr.for}" name="{$name}" value="{$value}" />
+                                    </div>
+                                </div>
+                            </div>
+                        {/form_field}
+
+                    <button type="submit" id="mailjet-save" name="mailjet_save" value="save" class="form-submit-button btn btn-sm btn-default" title="{intl d='mailjet.ai' l='Save'}">{intl d='mailjet.ai' l='Save'}</button>
+                </form>
+            {/form}
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+

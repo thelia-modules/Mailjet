@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
 
     <forms>
-        <form name="mailjet.configuration" class="Mailjet\Form\MailjetConfigurationForm" />
+        <form name="mailjet.configuration.form" class="Mailjet\Form\MailjetConfigurationForm" />
     </forms>
 
     <services>
