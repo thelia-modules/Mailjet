@@ -1,5 +1,9 @@
 
 <script>
+    $.wait = function( callback, seconds){
+        return window.setTimeout( callback, seconds * 1000 );
+    }
+
     $(document).ready(function() {
         $("#mailjet-form").on("submit", function(e, data){
             e.preventDefault();
@@ -17,8 +21,8 @@
             .success(function(data) {
                 if (data.error != 0) {
                     $("#loading-event").remove();
-                    $('#mailjet-failed-body').html(data.message);
-                    $("#mailjet-failed").modal("show");
+                    $("#mailjet-success").modal("show");
+		    $.wait( function(){ $("#mailjet-success").modal("hide"); }, 1);
                 }
             })
             .fail(function(jqXHR, textStatus, errorThrown){
