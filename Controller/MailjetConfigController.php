@@ -26,10 +26,6 @@ use Thelia\Tools\URL;
  */
 class MailjetConfigController extends BaseAdminController
 {
-    public function showAction()
-    {
-        return $this->render("mailjet-configuration");
-    }
 
     public function saveAction()
     {
@@ -55,7 +51,5 @@ class MailjetConfigController extends BaseAdminController
         if ("close" === $this->getRequest()->request->get("save_mode")) {
             return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/modules"));
         }
-
-        return $this->showAction();
     }
 }
