@@ -104,7 +104,7 @@ class NewsletterListener implements EventSubscriberInterface
             "IsUnsubscribed" => "True",
         ];
 
-        list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
+        list ($status, $data) = $this->api->delete(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
 
         $this->logAfterAction(
             sprintf("The email address '%s' has been correctly unsubscribed from the list", $event->getEmail()),
