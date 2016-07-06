@@ -36,81 +36,17 @@
                         {include "includes/inner-form-toolbar.html" hide_flags = 1 close_url={url path='/admin/modules'}}
                         <br/>
 
-                        {form_field form=$form field="success_url"}
+                        {form_field field="success_url"}
                             <input type="hidden" name="{$name}" value="{url path='/admin/modules'}" />
                         {/form_field}
 
-                        {form_hidden_fields form=$form}
+                        {form_hidden_fields}
 
-                        {form_field form=$form field="api_key"}
-                            <div class="form-group {if $error}has-error{/if}">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label for="{$label_attr.for}">
-                                            {$label}
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        {if $error}<span class="help-block">{$message}</span>{/if}
-                                        <input type="text" class="form-control" id="{$label_attr.for}" name="{$name}" value="{$value}" />
-                                    </div>
-                                </div>
-                            </div>
-                        {/form_field}
-
-                        {form_field form=$form field="api_secret"}
-                            <div class="form-group {if $error}has-error{/if}">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label for="{$label_attr.for}">
-                                            {$label}
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        {if $error}<span class="help-block">{$message}</span>{/if}
-                                        <input type="text" class="form-control" id="{$label_attr.for}" name="{$name}" value="{$value}" />
-                                    </div>
-                                </div>
-                            </div>
-                        {/form_field}
-
-                        {form_field form=$form field="ws_address"}
-                            <div class="form-group {if $error}has-error{/if}">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label for="{$label_attr.for}">
-                                            {$label}
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        {if $error}<span class="help-block">{$message}</span>{/if}
-                                        <input type="text" class="form-control" id="{$label_attr.for}" name="{$name}" value="{$value}" />
-                                    </div>
-                                </div>
-                            </div>
-                        {/form_field}
-
-                        {form_field form=$form field="newsletter_list"}
-                            <div class="form-group {if $error}has-error{/if}">
-                                <div class="row">
-                                    <div class="col-md-3">
-                                        <label for="{$label_attr.for}">
-                                            {$label}
-                                            <a href="#{$label_attr.for}"
-                                               class="link tooltip-link"
-                                               data-toggle="tooltip"
-                                               data-original-title="{intl l="This value is the name of your list mail address (example: the 'xxxxxx' of xxxxxx@lists.mailjet.com)" d="mailjet.bo.default"}">
-                                                ?
-                                            </a>
-                                        </label>
-                                    </div>
-                                    <div class="col-md-9">
-                                        {if $error}<span class="help-block">{$message}</span>{/if}
-                                        <input type="text" class="form-control" id="{$label_attr.for}" name="{$name}" value="{$value}" />
-                                    </div>
-                                </div>
-                            </div>
-                        {/form_field}
+                        {render_form_field field="api_key"}
+                        {render_form_field field="api_secret"}
+                        {render_form_field field="ws_address"}
+                        {render_form_field field="newsletter_list"}
+                        {render_form_field field="exception_on_errors"}
 
                         {include "includes/inner-form-toolbar.html" hide_flags = 1 close_url={url path='/admin/modules'} page_bottom = 1}
                     </form>

@@ -43,6 +43,7 @@ class MailjetConfigController extends BaseAdminController
             ConfigQuery::write(Mailjet::CONFIG_API_SECRET, $data["api_secret"]);
             ConfigQuery::write(Mailjet::CONFIG_API_WS_ADDRESS, $data["ws_address"]);
             ConfigQuery::write(Mailjet::CONFIG_NEWSLETTER_LIST, $data["newsletter_list"]);
+            ConfigQuery::write(Mailjet::CONFIG_THROW_EXCEPTION_ON_ERROR, $data["exception_on_errors"] ? true : false);
 
             $this->getParserContext()->set("success", true);
         } catch (\Exception $e) {

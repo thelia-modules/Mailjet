@@ -12,6 +12,7 @@
 
 namespace Mailjet\EventListeners;
 
+use Mailjet\Mailjet;
 use Mailjet\Model\MailjetNewsletter;
 use Mailjet\Model\MailjetNewsletterQuery;
 use Mailjet\Api\MailjetClient;
@@ -56,10 +57,10 @@ class NewsletterListener implements EventSubscriberInterface
     public function subscribe(NewsletterEvent $event)
     {
         // Create contact
-        $model = $this->apiAddUser($event, "registration");
-
-        // Add contact to the thelia list
-        $this->apiAddContactList($event, $model);
+        if (null !== $model = $this->apiAddUser($event, "registration")) {
+            // Add contact to the thelia list
+            $this->apiAddContactList($event, $model);
+        }
     }
 
     public function update(NewsletterEvent $event)
@@ -76,16 +77,16 @@ class NewsletterListener implements EventSubscriberInterface
 
             list ($status, $data) = $this->api->delete(MailjetClient::RESOURCE_LIST_RECIPIENT, $id);
 
-            $this->logAfterAction(
+            if ($this->logAfterAction(
                 sprintf("The email address '%s' has been correctly removed from the list", $event->getEmail()),
                 sprintf("The email address '%s' has not been removed from the list", $event->getEmail()),
                 $status
-            );
-
-            /**
-             * Then create a new client
-             */
-            $this->subscribe($event);
+            )) {
+                /**
+                 * Then create a new client
+                 */
+                $this->subscribe($event);
+            }
         }
     }
 
@@ -128,7 +129,7 @@ class NewsletterListener implements EventSubscriberInterface
             list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
         }
 
-        $this->logAfterAction(
+        if ($this->logAfterAction(
             sprintf(
                 "The following email address has been added into mailjet list.",
                 $event->getEmail()
@@ -138,11 +139,11 @@ class NewsletterListener implements EventSubscriberInterface
                 $event->getEmail()
             ),
             $status
-        );
+        )) {
+            $data = json_decode($data, true);
 
-        $data = json_decode($data, true);
-
-        $model->setRelationId($data["Data"][0]["ID"])->save();
+            $model->setRelationId($data["Data"][0]["ID"])->save();
+        }
     }
 
     protected function apiAddUser(NewsletterEvent $event, $function)
@@ -156,7 +157,7 @@ class NewsletterListener implements EventSubscriberInterface
                 "Name" => $event->getLastname() . " " . $event->getFirstname(),
             ]);
 
-            $this->logAfterAction(
+            if ($this->logAfterAction(
                 sprintf("Email address correctly added for %s '%s'", $function, $event->getEmail()),
                 sprintf(
                     "The following email address has been refused by mailjet: '%s' for action '%s'",
@@ -164,35 +165,44 @@ class NewsletterListener implements EventSubscriberInterface
                     $function
                 ),
                 $status
-            );
+            )) {
+                $data = json_decode($data, true);
 
-            $data = json_decode($data, true);
-
-            $model = new MailjetNewsletter();
-            $model
-                ->setId($data["Data"][0]["ID"])
-                ->setEmail($event->getEmail())
-            ;
-
+                $model = new MailjetNewsletter();
+                $model
+                    ->setId($data["Data"][0]["ID"])
+                    ->setEmail($event->getEmail());
+            }
         }
 
         return $model;
     }
 
+    protected function isStatusOk($status)
+    {
+        return $status >= 200 && $status < 300;
+    }
+
     protected function logAfterAction($successMessage, $errorMessage, $status)
     {
-        if ($status >= 200 && $status < 300) {
+        if ($this->isStatusOk($status)) {
             Tlog::getInstance()->info($successMessage);
+
+            return true;
         } else {
             Tlog::getInstance()->error(sprintf("%s. Status code: %d", $errorMessage, $status));
 
-            throw new \InvalidArgumentException(
-                $this->translator->trans(
-                    "An error occurred during the newsletter registration process",
-                    [],
-                    MailjetModule::MESSAGE_DOMAIN
-                )
-            );
+            if (ConfigQuery::read(Mailjet::CONFIG_THROW_EXCEPTION_ON_ERROR, false)) {
+                throw new \InvalidArgumentException(
+                    $this->translator->trans(
+                        "An error occurred during the newsletter registration process",
+                        [],
+                        MailjetModule::MESSAGE_DOMAIN
+                    )
+                );
+            }
+
+            return false;
         }
     }
 

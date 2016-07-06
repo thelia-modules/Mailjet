@@ -70,12 +70,18 @@ class MailjetConfigurationForm extends BaseForm
             ))
             ->add("newsletter_list", "text", array(
                 "label" => $translator->trans("Newsletter list address name", [], Mailjet::MESSAGE_DOMAIN),
-                "label_attr" => ["for" => "newsletter_list"],
                 "required" => true,
                 "constraints" => array(
                     new NotBlank(),
                 ),
-                "data" => ConfigQuery::read(Mailjet::CONFIG_NEWSLETTER_LIST)
+                "data" => ConfigQuery::read(Mailjet::CONFIG_NEWSLETTER_LIST),
+                'label_attr' => [
+                    'help' => $translator->trans(
+                        "This value is the name of your list mail address (example: the 'xxxxxx' of xxxxxx@lists.mailjet.com)",
+                        [],
+                        Mailjet::MESSAGE_DOMAIN
+                    )
+                ]
             ))
             ->add("ws_address", "text", array(
                 "label" => $translator->trans("Webservice address", [], Mailjet::MESSAGE_DOMAIN),
@@ -85,6 +91,17 @@ class MailjetConfigurationForm extends BaseForm
                     new NotBlank(),
                 ),
                 "data" => ConfigQuery::read(Mailjet::CONFIG_API_WS_ADDRESS)
+            ))
+            ->add("exception_on_errors", "checkbox", array(
+                "label" => $translator->trans("Throw exception on Mailjet error", [], Mailjet::MESSAGE_DOMAIN),
+                "data" => ConfigQuery::read(Mailjet::CONFIG_THROW_EXCEPTION_ON_ERROR, false) ? true : false,
+                'required' => false,
+                "label_attr" => [
+                    'help' => $translator->trans(
+                        "The module will throw an error if something wrong happens whan talking to MailJet. Warning ! This could prevent user registration if Mailjet server is down or unreachable !",
+                        [],
+                        Mailjet::MESSAGE_DOMAIN)
+                ]
             ))
         ;
     }

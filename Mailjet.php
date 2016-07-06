@@ -31,6 +31,7 @@ class Mailjet extends BaseModule
     const CONFIG_API_KEY = "mailjet.api.key";
     const CONFIG_API_SECRET = "mailjet.api.secret";
     const CONFIG_API_WS_ADDRESS = "mail.api.webservice_address";
+    const CONFIG_THROW_EXCEPTION_ON_ERROR = "mailjet.throw_exception_on_error";
 
     public function postActivation(ConnectionInterface $con = null)
     {
