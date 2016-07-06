@@ -100,7 +100,8 @@ class MailjetConfigurationForm extends BaseForm
                     'help' => $translator->trans(
                         "The module will throw an error if something wrong happens whan talking to MailJet. Warning ! This could prevent user registration if Mailjet server is down or unreachable !",
                         [],
-                        Mailjet::MESSAGE_DOMAIN)
+                        Mailjet::MESSAGE_DOMAIN
+                    )
                 ]
             ))
         ;

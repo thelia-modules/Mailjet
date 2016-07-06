@@ -95,7 +95,7 @@ class MailjetClient
     {
         // sanitize
         $string = '';
-        foreach($params as $key => $value) {
+        foreach ($params as $key => $value) {
             if ('' !== trim($value)) {
                 $string .= $key . '=' . urlencode($value) . '&';
             }
