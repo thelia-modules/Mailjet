@@ -78,9 +78,10 @@ class NewsletterListener implements EventSubscriberInterface
             list ($status, $data) = $this->api->delete(MailjetClient::RESOURCE_LIST_RECIPIENT, $id);
 
             if ($this->logAfterAction(
-                sprintf("The email address '%s' has been correctly removed from the list", $event->getEmail()),
-                sprintf("The email address '%s' has not been removed from the list", $event->getEmail()),
-                $status
+                sprintf("The email address '%s' was successfully removed from the list", $event->getEmail()),
+                sprintf("The email address '%s' was not removed from the list", $event->getEmail()),
+                $status,
+                $data
             )) {
                 /**
                  * Then create a new client
@@ -108,9 +109,10 @@ class NewsletterListener implements EventSubscriberInterface
         list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
 
         $this->logAfterAction(
-            sprintf("The email address '%s' has been correctly unsubscribed from the list", $event->getEmail()),
-            sprintf("The email address '%s' has not been unsubscribed from the list", $event->getEmail()),
-            $status
+            sprintf("The email address '%s' was successfully unsubscribed from the list", $event->getEmail()),
+            sprintf("The email address '%s' was not unsubscribed from the list", $event->getEmail()),
+            $status,
+            $data
         );
     }
 
@@ -128,17 +130,21 @@ class NewsletterListener implements EventSubscriberInterface
         } else {
             list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
         }
-
+    
         if ($this->logAfterAction(
             sprintf(
-                "The following email address has been added into mailjet list.",
+                "The email address %s was added to mailjet list %s",
+                ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST),
                 $event->getEmail()
             ),
             sprintf(
-                "The following email address has been refused by mailjet for addition in the list.",
-                $event->getEmail()
+                "The email address %s was refused by mailjet for addition to the list %s, params:%s",
+                $event->getEmail(),
+                ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST),
+                json_encode($params)
             ),
-            $status
+            $status,
+            $data
         )) {
             $data = json_decode($data, true);
 
@@ -152,19 +158,25 @@ class NewsletterListener implements EventSubscriberInterface
         $model = MailjetNewsletterQuery::create()->findOneByEmail($event->getEmail());
 
         if (null === $model) {
-            list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_CONTACT, [
-                "Email" => $event->getEmail(),
-                "Name" => $event->getLastname() . " " . $event->getFirstname(),
-            ]);
-
+            // Check if user exists before trying to create it (fixes sync. problems)
+            list ($status, $data) = $this->api->get(MailjetClient::RESOURCE_CONTACT, $event->getEmail());
+            
+            if ($status == 404) {
+                list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_CONTACT, [
+                    "Email" => $event->getEmail(),
+                    "Name" => $event->getLastname() . " " . $event->getFirstname(),
+                ]);
+            }
+            
             if ($this->logAfterAction(
-                sprintf("Email address correctly added for %s '%s'", $function, $event->getEmail()),
+                sprintf("Email address successfully added for %s '%s'", $function, $event->getEmail()),
                 sprintf(
-                    "The following email address has been refused by mailjet: '%s' for action '%s'",
+                    "The email address %s was refused by mailjet for action '%s'",
                     $event->getEmail(),
                     $function
                 ),
-                $status
+                $status,
+                $data
             )) {
                 $data = json_decode($data, true);
 
@@ -183,14 +195,14 @@ class NewsletterListener implements EventSubscriberInterface
         return $status >= 200 && $status < 300;
     }
 
-    protected function logAfterAction($successMessage, $errorMessage, $status)
+    protected function logAfterAction($successMessage, $errorMessage, $status, $data)
     {
         if ($this->isStatusOk($status)) {
             Tlog::getInstance()->info($successMessage);
 
             return true;
         } else {
-            Tlog::getInstance()->error(sprintf("%s. Status code: %d", $errorMessage, $status));
+            Tlog::getInstance()->error(sprintf("%s. Status code: %d, data: %s", $errorMessage, $status, $data));
 
             if (ConfigQuery::read(Mailjet::CONFIG_THROW_EXCEPTION_ON_ERROR, false)) {
                 throw new \InvalidArgumentException(
