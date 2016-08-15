@@ -183,7 +183,8 @@ class NewsletterListener implements EventSubscriberInterface
                 $model = new MailjetNewsletter();
                 $model
                     ->setId($data["Data"][0]["ID"])
-                    ->setEmail($event->getEmail());
+                    ->setEmail($event->getEmail())
+	                ->save();
             }
         }
 
