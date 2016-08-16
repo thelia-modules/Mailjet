@@ -95,7 +95,7 @@ class MailjetClient
     {
         // sanitize
         $string = '';
-        foreach($params as $key => $value) {
+        foreach ($params as $key => $value) {
             if ('' !== trim($value)) {
                 $string .= $key . '=' . urlencode($value) . '&';
             }
@@ -109,10 +109,13 @@ class MailjetClient
     {
         $response = curl_exec($this->curlHandler);
         $code = curl_getinfo($this->curlHandler, CURLINFO_HTTP_CODE);
-
+    
+        $error = curl_error($this->curlHandler);
+        $errno = curl_errno($this->curlHandler);
+    
         curl_close($this->curlHandler);
-
-        return [$code, $response];
+    
+        return [$code, $response ?: $error . " (errno $errno)"];
     }
 
     protected function lazyBuildAddress($resource, $id = null, $params = array())

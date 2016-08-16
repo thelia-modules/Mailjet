@@ -5,21 +5,15 @@
     <fullnamespace>Mailjet\Mailjet</fullnamespace>
     <descriptive locale="en_US">
         <title>Mailjet</title>
-        <!--
-        <subtitle></subtitle>
-        <description></description>
-        <postscriptum></postscriptum>
-        -->
     </descriptive>
     <descriptive locale="fr_FR">
         <title>Mailjet</title>
     </descriptive>
-    <!-- <logo></logo> -->
     <languages>
         <language>en_US</language>
         <language>fr_FR</language>
     </languages>
-    <version>1.0</version>
+    <version>1.1</version>
     <author>
         <name>Benjamin Perche</name>
         <email>bperche@openstudio.fr</email>
@@ -31,6 +25,6 @@
         <module version="&gt;=0.1">Front</module>
     </required>
     -->
-    <thelia>2.0.0</thelia>
+    <thelia>2.2.1</thelia>
     <stability>other</stability>
 </module>

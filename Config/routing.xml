@@ -5,10 +5,6 @@
         xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
     <!-- Thelia 2.0 backward compatibility -->
 
-    <route id="mailjet.show" path="/admin/module/Mailjet" methods="get">
-        <default key="_controller">Mailjet\Controller\MailjetConfigController::showAction</default>
-    </route>
-
     <route id="mailjet.save" path="/admin/module/Mailjet" methods="post">
         <default key="_controller">Mailjet\Controller\MailjetConfigController::saveAction</default>
     </route>
