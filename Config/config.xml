@@ -15,10 +15,4 @@
             <tag name="kernel.event_subscriber" />
         </service>
     </services>
-
-    <hooks>
-        <hook id="mailjet.configuration.hook" class="Mailjet\Hook\HookManager" scope="request">
-            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration" />
-        </hook>
-    </hooks>
 </config>
