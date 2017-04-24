@@ -68,25 +68,30 @@ class NewsletterListener implements EventSubscriberInterface
         $previousEmail = NewsletterQuery::create()->findPk($event->getId())->getEmail();
 
         if ($event->getEmail() !== $previousEmail) {
-            $model = MailjetNewsletterQuery::create()->findOneByEmail($previousEmail);
-
-            /**
-             * Delete the relation
-             */
-            $id = $model->getRelationId();
-
-            list ($status, $data) = $this->api->delete(MailjetClient::RESOURCE_LIST_RECIPIENT, $id);
-
-            if ($this->logAfterAction(
-                sprintf("The email address '%s' was successfully removed from the list", $event->getEmail()),
-                sprintf("The email address '%s' was not removed from the list", $event->getEmail()),
-                $status,
-                $data
-            )) {
+            if (null !== $model = MailjetNewsletterQuery::create()->findOneByEmail($previousEmail)) {
                 /**
-                 * Then create a new client
+                 * Delete the relation
                  */
-                $this->subscribe($event);
+                $id = $model->getRelationId();
+
+                list ($status, $data) = $this->api->delete(MailjetClient::RESOURCE_LIST_RECIPIENT, $id);
+
+                if ($this->logAfterAction(
+                    sprintf("The email address '%s' was successfully removed from the list", $event->getEmail()),
+                    sprintf("The email address '%s' was not removed from the list", $event->getEmail()),
+                    $status,
+                    $data
+                )
+                ) {
+                    // Reset relation ID.
+                    $model
+                        ->setRelationId(0)
+                        ->save();
+                    /**
+                     * Then create a new client
+                     */
+                    $this->subscribe($event);
+                }
             }
         }
     }
