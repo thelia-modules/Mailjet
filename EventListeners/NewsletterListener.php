@@ -102,31 +102,35 @@ class NewsletterListener implements EventSubscriberInterface
 
             list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
 
-            if ($this->logAfterAction(
+            $this->logAfterAction(
                 sprintf("The email address '%s' was successfully unsubscribed from the list", $event->getEmail()),
                 sprintf("The email address '%s' was not unsubscribed from the list", $event->getEmail()),
                 $status,
                 $data
-            )) {
-                // Clear internal relation ID
-                $model
-                    ->setRelationId(0)
-                    ->save();
-            }
+            );
         }
     }
 
     protected function apiAddContactList(NewsletterEvent $event, MailjetNewsletter $model)
     {
         $params = [
-            "ContactID" => $model->getId(),
-            "ListALT" => ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST),
             "IsActive" => "True",
             "IsUnsubscribed" => "False",
         ];
 
         // Add the contact to the contact list
         list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_LIST_RECIPIENT, $params);
+
+        if (intval($model->getRelationId()) == 0) {
+            $params["ContactID"] = $model->getId();
+            $params["ListALT"]   = ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST);
+
+            // Add the contact to the contact list
+            list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_LIST_RECIPIENT, $params);
+        } else {
+            // Update the contact status to reactivate it
+            list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
+        }
 
         if ($this->logAfterAction(
             sprintf(
