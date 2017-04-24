@@ -118,9 +118,6 @@ class NewsletterListener implements EventSubscriberInterface
             "IsUnsubscribed" => "False",
         ];
 
-        // Add the contact to the contact list
-        list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_LIST_RECIPIENT, $params);
-
         if (intval($model->getRelationId()) == 0) {
             $params["ContactID"] = $model->getId();
             $params["ListALT"]   = ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST);
