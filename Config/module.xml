@@ -13,10 +13,10 @@
         <language>en_US</language>
         <language>fr_FR</language>
     </languages>
-    <version>1.2</version>
+    <version>1.1</version>
     <author>
-        <name>Benjamin Perche, Franck Allimant</name>
-        <email>bperche@openstudio.fr, franck@cqfdev.fr</email>
+        <name>Benjamin Perche</name>
+        <email>bperche@openstudio.fr</email>
     </author>
     <type>classic</type>
     <!--

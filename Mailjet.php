@@ -81,15 +81,6 @@ class Mailjet extends BaseModule
         }
     }
 
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
-    {
-        if ($newVersion == "1.2") {
-            $database = new Database($con);
-            $database->insertSql(null, [__DIR__ . "/Config/update11-12.sql"]);
-        }
-    }
-
-
     protected function createConfigValue($name, array $translation, $value = '')
     {
         $config = new Config();
