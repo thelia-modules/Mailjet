@@ -93,44 +93,45 @@ class NewsletterListener implements EventSubscriberInterface
 
     public function unsubscribe(NewsletterEvent $event)
     {
-        $model = MailjetNewsletterQuery::create()->findOneByEmail($event->getEmail());
+        if (null !== $model = MailjetNewsletterQuery::create()->findOneByEmail($event->getEmail())) {
+            // Remove the contact from the contact list. The contact will still exist in Mailjet
+            $params = [
+                "IsActive" => "False",
+                "IsUnsubscribed" => "True",
+            ];
 
-        if (null === $model) {
-            return;
+            list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
+
+            $this->logAfterAction(
+                sprintf("The email address '%s' was successfully unsubscribed from the list", $event->getEmail()),
+                sprintf("The email address '%s' was not unsubscribed from the list", $event->getEmail()),
+                $status,
+                $data
+            );
         }
-
-        $params = [
-            "ContactID" => $model->getId(),
-            "ListALT" => ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST),
-            "IsActive" => "False",
-            "IsUnsubscribed" => "True",
-        ];
-
-        list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
-
-        $this->logAfterAction(
-            sprintf("The email address '%s' was successfully unsubscribed from the list", $event->getEmail()),
-            sprintf("The email address '%s' was not unsubscribed from the list", $event->getEmail()),
-            $status,
-            $data
-        );
     }
 
     protected function apiAddContactList(NewsletterEvent $event, MailjetNewsletter $model)
     {
         $params = [
-            "ContactID" => $model->getId(),
-            "ListALT" => ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST),
             "IsActive" => "True",
             "IsUnsubscribed" => "False",
         ];
 
-        if ($model->isNew()) {
+        // Add the contact to the contact list
+        list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_LIST_RECIPIENT, $params);
+
+        if (intval($model->getRelationId()) == 0) {
+            $params["ContactID"] = $model->getId();
+            $params["ListALT"]   = ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST);
+
+            // Add the contact to the contact list
             list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_LIST_RECIPIENT, $params);
         } else {
+            // Update the contact status to reactivate it
             list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
         }
-    
+
         if ($this->logAfterAction(
             sprintf(
                 "The email address %s was added to mailjet list %s",
@@ -148,7 +149,11 @@ class NewsletterListener implements EventSubscriberInterface
         )) {
             $data = json_decode($data, true);
 
-            $model->setRelationId($data["Data"][0]["ID"])->save();
+            // Save the contact/contact-list relation ID, we'll need it for unsubscription.
+            $model
+                ->setRelationId($data["Data"][0]["ID"])
+                ->save()
+            ;
         }
     }
 
@@ -160,14 +165,14 @@ class NewsletterListener implements EventSubscriberInterface
         if (null === $model) {
             // Check if user exists before trying to create it (fixes sync. problems)
             list ($status, $data) = $this->api->get(MailjetClient::RESOURCE_CONTACT, $event->getEmail());
-            
+
             if ($status == 404) {
                 list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_CONTACT, [
                     "Email" => $event->getEmail(),
                     "Name" => $event->getLastname() . " " . $event->getFirstname(),
                 ]);
             }
-            
+
             if ($this->logAfterAction(
                 sprintf("Email address successfully added for %s '%s'", $function, $event->getEmail()),
                 sprintf(
@@ -184,7 +189,7 @@ class NewsletterListener implements EventSubscriberInterface
                 $model
                     ->setId($data["Data"][0]["ID"])
                     ->setEmail($event->getEmail())
-	                ->save();
+                    ->save();
             }
         }
 
