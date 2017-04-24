@@ -130,7 +130,7 @@ class NewsletterListener implements EventSubscriberInterface
         } else {
             list ($status, $data) = $this->api->put(MailjetClient::RESOURCE_LIST_RECIPIENT, $model->getRelationId(), $params);
         }
-
+    
         if ($this->logAfterAction(
             sprintf(
                 "The email address %s was added to mailjet list %s",
@@ -160,14 +160,14 @@ class NewsletterListener implements EventSubscriberInterface
         if (null === $model) {
             // Check if user exists before trying to create it (fixes sync. problems)
             list ($status, $data) = $this->api->get(MailjetClient::RESOURCE_CONTACT, $event->getEmail());
-
+            
             if ($status == 404) {
                 list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_CONTACT, [
                     "Email" => $event->getEmail(),
                     "Name" => $event->getLastname() . " " . $event->getFirstname(),
                 ]);
             }
-
+            
             if ($this->logAfterAction(
                 sprintf("Email address successfully added for %s '%s'", $function, $event->getEmail()),
                 sprintf(
@@ -182,9 +182,9 @@ class NewsletterListener implements EventSubscriberInterface
 
                 $model = new MailjetNewsletter();
                 $model
-                    ->setRelationId($data["Data"][0]["ID"])
+                    ->setId($data["Data"][0]["ID"])
                     ->setEmail($event->getEmail())
-                    ->save();
+	                ->save();
             }
         }
 

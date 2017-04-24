@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database defaultIdMethod="native" name="thelia">
     <table name="mailjet_newsletter" namespace="Mailjet\Model">
-        <column name="id" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="id" type="INTEGER" required="true" primaryKey="true" />
         <column name="email" type="VARCHAR" size="255" required="true" />
         <column name="relation_id" type="INTEGER" required="true" />
 

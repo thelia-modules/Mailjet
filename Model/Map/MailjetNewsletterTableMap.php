@@ -134,7 +134,7 @@ class MailjetNewsletterTableMap extends TableMap
         $this->setPhpName('MailjetNewsletter');
         $this->setClassName('\\Mailjet\\Model\\MailjetNewsletter');
         $this->setPackage('Mailjet.Model');
-        $this->setUseIdGenerator(true);
+        $this->setUseIdGenerator(false);
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('EMAIL', 'Email', 'VARCHAR', true, 255, null);
@@ -388,10 +388,6 @@ class MailjetNewsletterTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from MailjetNewsletter object
-        }
-
-        if ($criteria->containsKey(MailjetNewsletterTableMap::ID) && $criteria->keyContainsValue(MailjetNewsletterTableMap::ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.MailjetNewsletterTableMap::ID.')');
         }
 
 
