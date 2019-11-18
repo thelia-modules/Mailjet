@@ -4,7 +4,7 @@
         <column name="id" autoIncrement="true" type="INTEGER" required="true" primaryKey="true" />
         <column name="mailjet_id" type="VARCHAR" size="255" required="true" />
         <column name="email" type="VARCHAR" size="255" required="true" />
-        <column name="relation_id" type="INTEGER" required="true" />
+        <column name="relation_id" type="INTEGER"/>
 
         <index name="idx_mailjet_newsletter_email">
             <index-column name="email" />
@@ -15,6 +15,9 @@
 
         <unique name="email_UNIQUE">
             <unique-column name="email" />
+        </unique>
+        <unique name="relation_id_UNIQUE">
+            <unique-column name="relation_id" />
         </unique>
     </table>
 

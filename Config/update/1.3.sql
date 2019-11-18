@@ -6,6 +6,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- mailjet_newsletter
 -- ---------------------------------------------------------------------
 
+ALTER TABLE `mailjet_newsletter` MODIFY `relation_id` INT;
+
 ALTER TABLE `mailjet_newsletter` MODIFY `id` VARCHAR(255);
 
 ALTER TABLE `mailjet_newsletter` CHANGE `id` `mailjet_id` VARCHAR(255);
@@ -15,8 +17,6 @@ ALTER TABLE `mailjet_newsletter` ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT UNI
 ALTER TABLE `mailjet_newsletter`
     DROP PRIMARY KEY,
     ADD PRIMARY KEY (`id`);
-
-DROP INDEX `relation_id_UNIQUE` ON `mailjet_newsletter`;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
