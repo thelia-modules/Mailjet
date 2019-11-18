@@ -85,7 +85,7 @@ class NewsletterListener implements EventSubscriberInterface
                 ) {
                     // Reset relation ID.
                     $model
-                        ->setRelationId(0)
+                        ->setRelationId(null)
                         ->save();
                     /**
                      * Then create a new client

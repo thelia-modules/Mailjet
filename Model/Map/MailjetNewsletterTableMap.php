@@ -144,7 +144,7 @@ class MailjetNewsletterTableMap extends TableMap
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
         $this->addColumn('MAILJET_ID', 'MailjetId', 'VARCHAR', true, 255, null);
         $this->addColumn('EMAIL', 'Email', 'VARCHAR', true, 255, null);
-        $this->addColumn('RELATION_ID', 'RelationId', 'INTEGER', true, null, null);
+        $this->addColumn('RELATION_ID', 'RelationId', 'INTEGER', false, null, null);
     } // initialize()
 
     /**
