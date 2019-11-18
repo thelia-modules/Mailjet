@@ -123,7 +123,7 @@ class NewsletterListener implements EventSubscriberInterface
             "IsUnsubscribed" => "False",
         ];
 
-        if (intval($model->getRelationId()) == 0) {
+        if (int($model->getRelationId()) == 0) {
             $params["ContactID"] = $model->getId();
             $params["ListALT"]   = ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST);
 
