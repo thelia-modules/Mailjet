@@ -65,7 +65,7 @@ class NewsletterListener implements EventSubscriberInterface
 
     public function update(NewsletterEvent $event)
     {
-        $previousEmail = NewsletterQuery::create()->findPk($event->getId())->getEmail();
+        $previousEmail = NewsletterQuery::create()->findPk($event->getMailjetId())->getEmail();
 
         if ($event->getEmail() !== $previousEmail) {
             if (null !== $model = MailjetNewsletterQuery::create()->findOneByEmail($previousEmail)) {
@@ -123,8 +123,8 @@ class NewsletterListener implements EventSubscriberInterface
             "IsUnsubscribed" => "False",
         ];
 
-        if (int($model->getRelationId()) == 0) {
-            $params["ContactID"] = $model->getId();
+        if ((int)($model->getRelationId()) == 0) {
+            $params["ContactID"] = $model->getMailjetId();
             $params["ListALT"]   = ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST);
 
             // Add the contact to the contact list
@@ -189,7 +189,7 @@ class NewsletterListener implements EventSubscriberInterface
 
                 $model = new MailjetNewsletter();
                 $model
-                    ->setId($data["Data"][0]["ID"])
+                    ->setMailjetId($data["Data"][0]["ID"])
                     ->setEmail($event->getEmail())
                     ->save();
             }
@@ -228,7 +228,7 @@ class NewsletterListener implements EventSubscriberInterface
 
     protected function getEmailFromEvent(NewsletterEvent $event)
     {
-        return NewsletterQuery::create()->findPk($event->getId())->getEmail();
+        return NewsletterQuery::create()->findPk($event->getMailjetId())->getEmail();
     }
 
     /**
