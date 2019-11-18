@@ -58,7 +58,7 @@ class MailjetNewsletterTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 3;
+    const NUM_COLUMNS = 4;
 
     /**
      * The number of lazy-loaded columns
@@ -68,12 +68,17 @@ class MailjetNewsletterTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 3;
+    const NUM_HYDRATE_COLUMNS = 4;
 
     /**
      * the column name for the ID field
      */
     const ID = 'mailjet_newsletter.ID';
+
+    /**
+     * the column name for the MAILJET_ID field
+     */
+    const MAILJET_ID = 'mailjet_newsletter.MAILJET_ID';
 
     /**
      * the column name for the EMAIL field
@@ -97,12 +102,12 @@ class MailjetNewsletterTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'Email', 'RelationId', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'email', 'relationId', ),
-        self::TYPE_COLNAME       => array(MailjetNewsletterTableMap::ID, MailjetNewsletterTableMap::EMAIL, MailjetNewsletterTableMap::RELATION_ID, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'EMAIL', 'RELATION_ID', ),
-        self::TYPE_FIELDNAME     => array('id', 'email', 'relation_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id', 'MailjetId', 'Email', 'RelationId', ),
+        self::TYPE_STUDLYPHPNAME => array('id', 'mailjetId', 'email', 'relationId', ),
+        self::TYPE_COLNAME       => array(MailjetNewsletterTableMap::ID, MailjetNewsletterTableMap::MAILJET_ID, MailjetNewsletterTableMap::EMAIL, MailjetNewsletterTableMap::RELATION_ID, ),
+        self::TYPE_RAW_COLNAME   => array('ID', 'MAILJET_ID', 'EMAIL', 'RELATION_ID', ),
+        self::TYPE_FIELDNAME     => array('id', 'mailjet_id', 'email', 'relation_id', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -112,12 +117,12 @@ class MailjetNewsletterTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'Email' => 1, 'RelationId' => 2, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'email' => 1, 'relationId' => 2, ),
-        self::TYPE_COLNAME       => array(MailjetNewsletterTableMap::ID => 0, MailjetNewsletterTableMap::EMAIL => 1, MailjetNewsletterTableMap::RELATION_ID => 2, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'EMAIL' => 1, 'RELATION_ID' => 2, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'email' => 1, 'relation_id' => 2, ),
-        self::TYPE_NUM           => array(0, 1, 2, )
+        self::TYPE_PHPNAME       => array('Id' => 0, 'MailjetId' => 1, 'Email' => 2, 'RelationId' => 3, ),
+        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'mailjetId' => 1, 'email' => 2, 'relationId' => 3, ),
+        self::TYPE_COLNAME       => array(MailjetNewsletterTableMap::ID => 0, MailjetNewsletterTableMap::MAILJET_ID => 1, MailjetNewsletterTableMap::EMAIL => 2, MailjetNewsletterTableMap::RELATION_ID => 3, ),
+        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'MAILJET_ID' => 1, 'EMAIL' => 2, 'RELATION_ID' => 3, ),
+        self::TYPE_FIELDNAME     => array('id' => 0, 'mailjet_id' => 1, 'email' => 2, 'relation_id' => 3, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, )
     );
 
     /**
@@ -134,9 +139,10 @@ class MailjetNewsletterTableMap extends TableMap
         $this->setPhpName('MailjetNewsletter');
         $this->setClassName('\\Mailjet\\Model\\MailjetNewsletter');
         $this->setPackage('Mailjet.Model');
-        $this->setUseIdGenerator(false);
+        $this->setUseIdGenerator(true);
         // columns
         $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+        $this->addColumn('MAILJET_ID', 'MailjetId', 'VARCHAR', true, 255, null);
         $this->addColumn('EMAIL', 'Email', 'VARCHAR', true, 255, null);
         $this->addColumn('RELATION_ID', 'RelationId', 'INTEGER', true, null, null);
     } // initialize()
@@ -287,10 +293,12 @@ class MailjetNewsletterTableMap extends TableMap
     {
         if (null === $alias) {
             $criteria->addSelectColumn(MailjetNewsletterTableMap::ID);
+            $criteria->addSelectColumn(MailjetNewsletterTableMap::MAILJET_ID);
             $criteria->addSelectColumn(MailjetNewsletterTableMap::EMAIL);
             $criteria->addSelectColumn(MailjetNewsletterTableMap::RELATION_ID);
         } else {
             $criteria->addSelectColumn($alias . '.ID');
+            $criteria->addSelectColumn($alias . '.MAILJET_ID');
             $criteria->addSelectColumn($alias . '.EMAIL');
             $criteria->addSelectColumn($alias . '.RELATION_ID');
         }
@@ -388,6 +396,10 @@ class MailjetNewsletterTableMap extends TableMap
             $criteria = clone $criteria; // rename for clarity
         } else {
             $criteria = $criteria->buildCriteria(); // build Criteria from MailjetNewsletter object
+        }
+
+        if ($criteria->containsKey(MailjetNewsletterTableMap::ID) && $criteria->keyContainsValue(MailjetNewsletterTableMap::ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.MailjetNewsletterTableMap::ID.')');
         }
 
 
