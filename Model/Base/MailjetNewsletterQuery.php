@@ -19,10 +19,12 @@ use Propel\Runtime\Exception\PropelException;
  *
  *
  * @method     ChildMailjetNewsletterQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     ChildMailjetNewsletterQuery orderByMailjetId($order = Criteria::ASC) Order by the mailjet_id column
  * @method     ChildMailjetNewsletterQuery orderByEmail($order = Criteria::ASC) Order by the email column
  * @method     ChildMailjetNewsletterQuery orderByRelationId($order = Criteria::ASC) Order by the relation_id column
  *
  * @method     ChildMailjetNewsletterQuery groupById() Group by the id column
+ * @method     ChildMailjetNewsletterQuery groupByMailjetId() Group by the mailjet_id column
  * @method     ChildMailjetNewsletterQuery groupByEmail() Group by the email column
  * @method     ChildMailjetNewsletterQuery groupByRelationId() Group by the relation_id column
  *
@@ -34,10 +36,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMailjetNewsletter findOneOrCreate(ConnectionInterface $con = null) Return the first ChildMailjetNewsletter matching the query, or a new ChildMailjetNewsletter object populated from the query conditions when no match is found
  *
  * @method     ChildMailjetNewsletter findOneById(int $id) Return the first ChildMailjetNewsletter filtered by the id column
+ * @method     ChildMailjetNewsletter findOneByMailjetId(string $mailjet_id) Return the first ChildMailjetNewsletter filtered by the mailjet_id column
  * @method     ChildMailjetNewsletter findOneByEmail(string $email) Return the first ChildMailjetNewsletter filtered by the email column
  * @method     ChildMailjetNewsletter findOneByRelationId(int $relation_id) Return the first ChildMailjetNewsletter filtered by the relation_id column
  *
  * @method     array findById(int $id) Return ChildMailjetNewsletter objects filtered by the id column
+ * @method     array findByMailjetId(string $mailjet_id) Return ChildMailjetNewsletter objects filtered by the mailjet_id column
  * @method     array findByEmail(string $email) Return ChildMailjetNewsletter objects filtered by the email column
  * @method     array findByRelationId(int $relation_id) Return ChildMailjetNewsletter objects filtered by the relation_id column
  *
@@ -128,7 +132,7 @@ abstract class MailjetNewsletterQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT ID, EMAIL, RELATION_ID FROM mailjet_newsletter WHERE ID = :p0';
+        $sql = 'SELECT ID, MAILJET_ID, EMAIL, RELATION_ID FROM mailjet_newsletter WHERE ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -256,6 +260,35 @@ abstract class MailjetNewsletterQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(MailjetNewsletterTableMap::ID, $id, $comparison);
+    }
+
+    /**
+     * Filter the query on the mailjet_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByMailjetId('fooValue');   // WHERE mailjet_id = 'fooValue'
+     * $query->filterByMailjetId('%fooValue%'); // WHERE mailjet_id LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $mailjetId The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return ChildMailjetNewsletterQuery The current query, for fluid interface
+     */
+    public function filterByMailjetId($mailjetId = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($mailjetId)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $mailjetId)) {
+                $mailjetId = str_replace('*', '%', $mailjetId);
+                $comparison = Criteria::LIKE;
+            }
+        }
+
+        return $this->addUsingAlias(MailjetNewsletterTableMap::MAILJET_ID, $mailjetId, $comparison);
     }
 
     /**

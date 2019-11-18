@@ -85,7 +85,7 @@ class NewsletterListener implements EventSubscriberInterface
                 ) {
                     // Reset relation ID.
                     $model
-                        ->setRelationId(0)
+                        ->setRelationId(null)
                         ->save();
                     /**
                      * Then create a new client
@@ -123,8 +123,8 @@ class NewsletterListener implements EventSubscriberInterface
             "IsUnsubscribed" => "False",
         ];
 
-        if (intval($model->getRelationId()) == 0) {
-            $params["ContactID"] = $model->getId();
+        if (($model->getRelationId()) === null) {
+            $params["ContactID"] = $model->getMailjetId();
             $params["ListALT"]   = ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST);
 
             // Add the contact to the contact list
@@ -189,7 +189,7 @@ class NewsletterListener implements EventSubscriberInterface
 
                 $model = new MailjetNewsletter();
                 $model
-                    ->setId($data["Data"][0]["ID"])
+                    ->setMailjetId($data["Data"][0]["ID"])
                     ->setEmail($event->getEmail())
                     ->save();
             }

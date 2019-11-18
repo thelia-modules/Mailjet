@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database defaultIdMethod="native" name="thelia">
     <table name="mailjet_newsletter" namespace="Mailjet\Model">
-        <column name="id" type="INTEGER" required="true" primaryKey="true" />
+        <column name="id" autoIncrement="true" type="INTEGER" required="true" primaryKey="true" />
+        <column name="mailjet_id" type="VARCHAR" size="255" required="true" />
         <column name="email" type="VARCHAR" size="255" required="true" />
-        <column name="relation_id" type="INTEGER" required="true" />
+        <column name="relation_id" type="INTEGER"/>
 
         <index name="idx_mailjet_newsletter_email">
             <index-column name="email" />

@@ -58,6 +58,12 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
     protected $id;
 
     /**
+     * The value for the mailjet_id field.
+     * @var        string
+     */
+    protected $mailjet_id;
+
+    /**
      * The value for the email field.
      * @var        string
      */
@@ -347,6 +353,17 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
     }
 
     /**
+     * Get the [mailjet_id] column value.
+     *
+     * @return   string
+     */
+    public function getMailjetId()
+    {
+
+        return $this->mailjet_id;
+    }
+
+    /**
      * Get the [email] column value.
      *
      * @return   string
@@ -388,6 +405,27 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
 
         return $this;
     } // setId()
+
+    /**
+     * Set the value of [mailjet_id] column.
+     *
+     * @param      string $v new value
+     * @return   \Mailjet\Model\MailjetNewsletter The current object (for fluent API support)
+     */
+    public function setMailjetId($v)
+    {
+        if ($v !== null) {
+            $v = (string) $v;
+        }
+
+        if ($this->mailjet_id !== $v) {
+            $this->mailjet_id = $v;
+            $this->modifiedColumns[MailjetNewsletterTableMap::MAILJET_ID] = true;
+        }
+
+
+        return $this;
+    } // setMailjetId()
 
     /**
      * Set the value of [email] column.
@@ -471,10 +509,13 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
             $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : MailjetNewsletterTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : MailjetNewsletterTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : MailjetNewsletterTableMap::translateFieldName('MailjetId', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->mailjet_id = (null !== $col) ? (string) $col : null;
+
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : MailjetNewsletterTableMap::translateFieldName('Email', TableMap::TYPE_PHPNAME, $indexType)];
             $this->email = (null !== $col) ? (string) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : MailjetNewsletterTableMap::translateFieldName('RelationId', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : MailjetNewsletterTableMap::translateFieldName('RelationId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->relation_id = (null !== $col) ? (int) $col : null;
             $this->resetModified();
 
@@ -484,7 +525,7 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 3; // 3 = MailjetNewsletterTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 4; // 4 = MailjetNewsletterTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \Mailjet\Model\MailjetNewsletter object", 0, $e);
@@ -687,10 +728,17 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
         $modifiedColumns = array();
         $index = 0;
 
+        $this->modifiedColumns[MailjetNewsletterTableMap::ID] = true;
+        if (null !== $this->id) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . MailjetNewsletterTableMap::ID . ')');
+        }
 
          // check the columns in natural order for more readable SQL queries
         if ($this->isColumnModified(MailjetNewsletterTableMap::ID)) {
             $modifiedColumns[':p' . $index++]  = 'ID';
+        }
+        if ($this->isColumnModified(MailjetNewsletterTableMap::MAILJET_ID)) {
+            $modifiedColumns[':p' . $index++]  = 'MAILJET_ID';
         }
         if ($this->isColumnModified(MailjetNewsletterTableMap::EMAIL)) {
             $modifiedColumns[':p' . $index++]  = 'EMAIL';
@@ -712,6 +760,9 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
                     case 'ID':
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
                         break;
+                    case 'MAILJET_ID':
+                        $stmt->bindValue($identifier, $this->mailjet_id, PDO::PARAM_STR);
+                        break;
                     case 'EMAIL':
                         $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
                         break;
@@ -725,6 +776,13 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
             Propel::log($e->getMessage(), Propel::LOG_ERR);
             throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), 0, $e);
         }
+
+        try {
+            $pk = $con->lastInsertId();
+        } catch (Exception $e) {
+            throw new PropelException('Unable to get autoincrement id.', 0, $e);
+        }
+        $this->setId($pk);
 
         $this->setNew(false);
     }
@@ -777,9 +835,12 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
                 return $this->getId();
                 break;
             case 1:
-                return $this->getEmail();
+                return $this->getMailjetId();
                 break;
             case 2:
+                return $this->getEmail();
+                break;
+            case 3:
                 return $this->getRelationId();
                 break;
             default:
@@ -811,8 +872,9 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
         $keys = MailjetNewsletterTableMap::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getEmail(),
-            $keys[2] => $this->getRelationId(),
+            $keys[1] => $this->getMailjetId(),
+            $keys[2] => $this->getEmail(),
+            $keys[3] => $this->getRelationId(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -856,9 +918,12 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setEmail($value);
+                $this->setMailjetId($value);
                 break;
             case 2:
+                $this->setEmail($value);
+                break;
+            case 3:
                 $this->setRelationId($value);
                 break;
         } // switch()
@@ -886,8 +951,9 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
         $keys = MailjetNewsletterTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-        if (array_key_exists($keys[1], $arr)) $this->setEmail($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setRelationId($arr[$keys[2]]);
+        if (array_key_exists($keys[1], $arr)) $this->setMailjetId($arr[$keys[1]]);
+        if (array_key_exists($keys[2], $arr)) $this->setEmail($arr[$keys[2]]);
+        if (array_key_exists($keys[3], $arr)) $this->setRelationId($arr[$keys[3]]);
     }
 
     /**
@@ -900,6 +966,7 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
         $criteria = new Criteria(MailjetNewsletterTableMap::DATABASE_NAME);
 
         if ($this->isColumnModified(MailjetNewsletterTableMap::ID)) $criteria->add(MailjetNewsletterTableMap::ID, $this->id);
+        if ($this->isColumnModified(MailjetNewsletterTableMap::MAILJET_ID)) $criteria->add(MailjetNewsletterTableMap::MAILJET_ID, $this->mailjet_id);
         if ($this->isColumnModified(MailjetNewsletterTableMap::EMAIL)) $criteria->add(MailjetNewsletterTableMap::EMAIL, $this->email);
         if ($this->isColumnModified(MailjetNewsletterTableMap::RELATION_ID)) $criteria->add(MailjetNewsletterTableMap::RELATION_ID, $this->relation_id);
 
@@ -965,11 +1032,12 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
      */
     public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
     {
-        $copyObj->setId($this->getId());
+        $copyObj->setMailjetId($this->getMailjetId());
         $copyObj->setEmail($this->getEmail());
         $copyObj->setRelationId($this->getRelationId());
         if ($makeNew) {
             $copyObj->setNew(true);
+            $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
         }
     }
 
@@ -1001,6 +1069,7 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
     public function clear()
     {
         $this->id = null;
+        $this->mailjet_id = null;
         $this->email = null;
         $this->relation_id = null;
         $this->alreadyInSave = false;
