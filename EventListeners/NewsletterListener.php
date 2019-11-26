@@ -13,16 +13,21 @@
 namespace Mailjet\EventListeners;
 
 use Mailjet\Mailjet;
+use Mailjet\Model\MailjetContactListQuery;
 use Mailjet\Model\MailjetNewsletter;
 use Mailjet\Model\MailjetNewsletterQuery;
 use Mailjet\Api\MailjetClient;
+use Mailjet\Service\ContactListService;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Event\Newsletter\NewsletterEvent;
 use Mailjet\Mailjet as MailjetModule;
+use Thelia\Core\HttpFoundation\Request;
 use Thelia\Log\Tlog;
 use Thelia\Model\ConfigQuery;
+use Thelia\Model\CustomerQuery;
+use Thelia\Model\LangQuery;
 use Thelia\Model\NewsletterQuery;
 
 /**
@@ -41,8 +46,16 @@ class NewsletterListener implements EventSubscriberInterface
      * @var MailjetClient
      */
     protected $api;
+    /**
+     * @var Request
+     */
+    private $request;
+    /**
+     * @var ContactListService
+     */
+    private $contactListService;
 
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, Request $request, ContactListService $contactListService)
     {
         $this->translator = $translator;
 
@@ -52,6 +65,9 @@ class NewsletterListener implements EventSubscriberInterface
             ConfigQuery::read(MailjetModule::CONFIG_API_SECRET),
             ConfigQuery::read(MailjetModule::CONFIG_API_WS_ADDRESS)
         );
+
+        $this->request = $request;
+        $this->contactListService = $contactListService;
     }
 
     public function subscribe(NewsletterEvent $event)
@@ -123,9 +139,32 @@ class NewsletterListener implements EventSubscriberInterface
             "IsUnsubscribed" => "False",
         ];
 
-        if (($model->getRelationId()) === null) {
+        if ($model->getRelationId() === null) {
+
             $params["ContactID"] = $model->getMailjetId();
-            $params["ListALT"]   = ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST);
+            $clName = $this->request->get('contact-list');
+            $customer = CustomerQuery::create()->findOneByEmail($model->getEmail());
+            if ($customer) {
+                $locale = LangQuery::create()->findOneById($customer->getLangId())->getLocale();
+            }
+            $defaultContactList = MailjetContactListQuery::create()
+                ->filterByLocale($locale)
+                ->filterByDefaultList(1)
+                ->findOne();
+
+            if(null !== $clName){
+
+                $slugContactList = $this->contactListService->getContactlistByName($clName);
+
+                $params["ListALT"]   = $slugContactList;
+            } elseif (null !== $defaultContactList) {
+                $params["ListALT"]   = $defaultContactList->getSlugCl();
+            } else {
+                $params["ListALT"]   = ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST);
+            }
+
+            $params["ContactID"] = $model->getId();
+
 
             // Add the contact to the contact list
             list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_LIST_RECIPIENT, $params);
@@ -151,8 +190,14 @@ class NewsletterListener implements EventSubscriberInterface
         )) {
             $data = json_decode($data, true);
 
+            $mailJet = MailjetNewsletterQuery::create()
+                ->filterByEmail($event->getEmail())->findOne();
+
+
             // Save the contact/contact-list relation ID, we'll need it for unsubscription.
-            $model
+            $mailJet
+                ->setMailjetId($data["Data"][0]["ID"])
+                ->setEmail($event->getEmail())
                 ->setRelationId($data["Data"][0]["ID"])
                 ->save()
             ;
@@ -189,7 +234,7 @@ class NewsletterListener implements EventSubscriberInterface
 
                 $model = new MailjetNewsletter();
                 $model
-                    ->setMailjetId($data["Data"][0]["ID"])
+                    ->setId($data["Data"][0]["ID"])
                     ->setEmail($event->getEmail())
                     ->save();
             }

@@ -14,8 +14,12 @@ namespace Mailjet\Controller;
 
 use Mailjet\Form\MailjetConfigurationForm;
 use Mailjet\Mailjet;
+use Mailjet\Model\MailjetContactListQuery;
+use Mailjet\Service\ContactListService;
+use mysql_xdevapi\Result;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Controller\Admin\BaseAdminController;
+use Thelia\Core\HttpFoundation\Request;
 use Thelia\Model\ConfigQuery;
 use Thelia\Tools\URL;
 
@@ -53,5 +57,90 @@ class MailjetConfigController extends BaseAdminController
         }
 
         return $this->render('module-configure', [ 'module_code' => 'Mailjet' ]);
+    }
+
+    public function updateContactListAction(Request $request) {
+        $id = $request->attributes->get("id");
+
+        $name = $_POST['mailjet_contact_list_configuration']['add_name_address'];
+        $slug = $_POST['mailjet_contact_list_configuration']['add_slug_address'];
+
+        MailjetContactListQuery::create()
+            ->findOneByIdCl($id)
+            ->setNameCl($name)
+            ->setSlugCl($slug)
+            ->save();
+    }
+
+    public function addContactListAction()
+    {
+        $form = $this->createForm('mailjet.contact.list');
+
+        try {
+            $this->validateForm($form);
+
+            $isNewLocalDefault = 0;
+            if ( null === $getLocaleDefault = MailjetContactListQuery::create()
+                    ->filterByLocale($form->getForm()->get('locale_address')->getData())
+                    ->filterByDefaultList(1)
+                    ->findOne()
+            ) {
+                $isNewLocalDefault = 1;
+            } elseif (1 === $form->getForm()->get('default_address')->getData()) {
+                $isNewLocalDefault = 1;
+                $getLocaleDefault->setDefaultList(0)->save();
+            }
+
+
+
+            $data = [
+                'add_name_address' => $form->getForm()->get('add_name_address')->getData(),
+                'add_slug_address' => $form->getForm()->get('add_slug_address')->getData(),
+                'locale_address' => $form->getForm()->get('locale_address')->getData(),
+                'default_address' => $isNewLocalDefault,
+            ];
+
+            /** @var ContactListService $contactListService */
+            $contactListService = $this->container->get('contact.list');
+
+            $contactListService->addContactList($data);
+
+        } catch (\Exception $e) {
+            $this->getParserContext()
+                ->setGeneralError($e->getMessage())
+                ->addForm($form)
+            ;
+        }
+
+        return $this->render('module-configure', [ 'module_code' => 'Mailjet' ]);
+    }
+
+    public function deleteContactAction(Request $request)
+    {
+        $idCl = $request->query->get('id_cl');
+
+        /** @var ContactListService $contactListService */
+        $contactListService = $this->container->get('contact.list');
+
+        $contactListService->delContactList($idCl);
+
+        return $this->generateRedirect(
+            URL::getInstance()->absoluteUrl('/admin/module/Mailjet')
+        );
+    }
+
+    public function setDefaultContactAction(Request $request)
+    {
+        $idCl = $request->query->get('id_cl');
+        $locale = MailjetContactListQuery::create()->findOneByIdCl($idCl)->getLocale();
+
+        /** @var ContactListService $contactListService */
+        $contactListService = $this->container->get('contact.list');
+
+        $contactListService->setDefault($idCl, $locale);
+
+        return $this->generateRedirect(
+            URL::getInstance()->absoluteUrl('/admin/module/Mailjet')
+        );
     }
 }

@@ -30,4 +30,118 @@
         {include "includes/inner-form-toolbar.html" hide_flags = 1 close_url={url path='/admin/modules'} page_bottom = 1}
     </form>
     {/form}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 general-block-decorator">
+    <div class="title">
+        {intl d="mailjet.bo.default" l="Add contact list"}
+    </div>
+    {form name="mailjet.contact.list"}
+        <form action="{url path='/admin/module/Mailjet/contact-list/add'}" method="post">
+            <br/>
+
+            {form_field field="success_url"}
+                <input type="hidden" name="{$name}" value="{url path='/admin/modules'}" />
+            {/form_field}
+
+            {form_hidden_fields}
+            <div class="col-md-4 form-group">
+            {render_form_field field="add_name_address"}
+            </div>
+            <div class="col-md-4 form-group">
+                {render_form_field field="add_slug_address"}
+            </div>
+            <div class="col-md-4 form-group">
+                {render_form_field field="locale_address"}
+            </div>
+
+            <div class="col-md-2 form-group btn-group">
+
+                {loop name="auth-edit" type="auth" role="ADMIN" resource="admin.module" access="CREATE" module="PopIn"}
+                    <button type="submit" class="btn btn-primary"> <i class="glyphicon glyphicon-plus"></i> {intl l='Add a contact list'}</button>
+                {/loop}
+            </div>
+
+            <div class="col-md-1 form-group">
+                {render_form_field field="default_address"}
+            </div>
+
+        </form>
+    {/form}
+    </div>
+    <div class="col-xs-12 table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+            <tr>
+                <th class="object-title">
+                    {intl l="ID" d="mailjet.bo.default"}
+                </th>
+                <th class="object-title">
+                    {intl l="CONTACT LIST NAME" d="mailjet.bo.default"}
+                </th>
+                <th class="object-title">
+                    {intl l="SLUG MAILJET" d="mailjet.bo.default"}
+                </th>
+                <th class="object-title">
+                    {intl l="LOCALE" d="mailjet.bo.default"}
+                </th>
+                <th class="object-title">
+                    {intl l="IS DEFAULT" d="mailjet.bo.default"}
+                </th>
+                <th class="object-title">
+                    {intl l="ACTIONS" d="mailjet.bo.default"}
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            {loop type="contact.list.loop" name="contact.list.loop"}
+            {form name="mailjet.contact.list"}
+
+            {form_field field="success_url"}
+            <input type="hidden" name="{$name}" value="{url path='/admin/modules'}" />
+            {/form_field}
+            {form_hidden_fields}
+
+            <form action="{url path="/admin/module/Mailjet/contact-list/update/{$ID_CL}"}" method="post" id="updateForm-{$ID_CL}">
+            <tr>
+                <td><input value={$ID_CL} type="hidden">{$ID_CL}</td>
+                <td>
+                    {form_field form=$form field="add_name_address"}
+                    <input type="text" name="{$name}" value="{$NAME_CL}"/>
+                    {/form_field}
+                </td>
+                <td>
+                    {form_field form=$form field="add_slug_address"}
+                    <input type="text" name="{$name}" value="{$SLUG_CL}"/>
+                    {/form_field}
+                </td>
+                {loop type="lang" name="act-locales" locale=$LOCALE}
+                <td>{$TITLE} ({$LOCALE})</td>
+                {/loop}
+                {if $IS_DEFAULT eq 1}
+                <td>{$IS_DEFAULT}</td>
+                {else}
+                <td><a href="{url path='/admin/module/Mailjet/contact-list/set-default' id_cl=$ID_CL }">{intl l="SET DEFAULT" d="mailjet.bo.default"}</a></td>
+                {/if}
+                <td>
+                    <div class="btn-toolbar btn toolbar-primary">
+                        <span class="glyphicon glyphicon-cog"></span>
+                    </div>
+                    <div class="toolbar-options hidden">
+                        {loop type="auth" name="can_change" role="ADMIN" resource="admin.order-status" access="UPDATE"}
+                        <a title="{intl l='SAVE' d='mailjet.bo.default'}" href="" onclick="document.forms['updateForm-{$ID_CL}'].submit(); return false;"><span class="glyphicon glyphicon-floppy-save"></span></a>
+                        <a class="order-status-cancel" title="{intl l='DELETE' d='mailjet.bo.default'}"
+                           href="{url path="/admin/module/Mailjet/contact-list/delete" id_cl=$ID_CL }"><span
+                            class="glyphicon glyphicon-remove-sign"></span></a>
+                        {/loop}
+                    </div>
+                </td>
+            </tr>
+            </form>
+            {/form}
+            {/loop}
+            </tbody>
+        </table>
+    </div>
 </div>
