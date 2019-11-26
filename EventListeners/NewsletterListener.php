@@ -146,6 +146,8 @@ class NewsletterListener implements EventSubscriberInterface
             $customer = CustomerQuery::create()->findOneByEmail($model->getEmail());
             if ($customer) {
                 $locale = LangQuery::create()->findOneById($customer->getLangId())->getLocale();
+            } else {
+                $locale = LangQuery::create()->findOneByByDefault(1)->getLocale();
             }
             $defaultContactList = MailjetContactListQuery::create()
                 ->filterByLocale($locale)
@@ -162,9 +164,6 @@ class NewsletterListener implements EventSubscriberInterface
             } else {
                 $params["ListALT"]   = ConfigQuery::read(MailjetModule::CONFIG_NEWSLETTER_LIST);
             }
-
-            $params["ContactID"] = $model->getId();
-
 
             // Add the contact to the contact list
             list ($status, $data) = $this->api->post(MailjetClient::RESOURCE_LIST_RECIPIENT, $params);
@@ -196,8 +195,6 @@ class NewsletterListener implements EventSubscriberInterface
 
             // Save the contact/contact-list relation ID, we'll need it for unsubscription.
             $mailJet
-                ->setMailjetId($data["Data"][0]["ID"])
-                ->setEmail($event->getEmail())
                 ->setRelationId($data["Data"][0]["ID"])
                 ->save()
             ;
@@ -234,7 +231,7 @@ class NewsletterListener implements EventSubscriberInterface
 
                 $model = new MailjetNewsletter();
                 $model
-                    ->setId($data["Data"][0]["ID"])
+                    ->setMailjetId($data["Data"][0]["ID"])
                     ->setEmail($event->getEmail())
                     ->save();
             }

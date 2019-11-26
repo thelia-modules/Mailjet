@@ -6,7 +6,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- mailjet_newsletter
 -- ---------------------------------------------------------------------
 
-ALTER TABLE `mailjet_newsletter` MODIFY `relation_id` INT;
+ALTER TABLE `mailjet_newsletter` MODIFY `relation_id` VARCHAR(255);
 
 ALTER TABLE `mailjet_newsletter` MODIFY `id` VARCHAR(255);
 
@@ -17,8 +17,6 @@ ALTER TABLE `mailjet_newsletter` ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT UNI
 ALTER TABLE `mailjet_newsletter`
     DROP PRIMARY KEY,
     ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `mailjet_newsletter` ADD COLUMN `relation_id` VARCHAR(255);
 
 -- ---------------------------------------------------------------------
 -- mailjet_contact_list
