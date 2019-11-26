@@ -71,7 +71,7 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
 
     /**
      * The value for the relation_id field.
-     * @var        int
+     * @var        string
      */
     protected $relation_id;
 
@@ -377,7 +377,7 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
     /**
      * Get the [relation_id] column value.
      *
-     * @return   int
+     * @return   string
      */
     public function getRelationId()
     {
@@ -451,13 +451,13 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
     /**
      * Set the value of [relation_id] column.
      *
-     * @param      int $v new value
+     * @param      string $v new value
      * @return   \Mailjet\Model\MailjetNewsletter The current object (for fluent API support)
      */
     public function setRelationId($v)
     {
         if ($v !== null) {
-            $v = (int) $v;
+            $v = (string) $v;
         }
 
         if ($this->relation_id !== $v) {
@@ -516,7 +516,7 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
             $this->email = (null !== $col) ? (string) $col : null;
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : MailjetNewsletterTableMap::translateFieldName('RelationId', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->relation_id = (null !== $col) ? (int) $col : null;
+            $this->relation_id = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -767,7 +767,7 @@ abstract class MailjetNewsletter implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
                         break;
                     case 'RELATION_ID':
-                        $stmt->bindValue($identifier, $this->relation_id, PDO::PARAM_INT);
+                        $stmt->bindValue($identifier, $this->relation_id, PDO::PARAM_STR);
                         break;
                 }
             }

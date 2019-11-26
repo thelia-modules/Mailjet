@@ -38,12 +38,12 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildMailjetNewsletter findOneById(int $id) Return the first ChildMailjetNewsletter filtered by the id column
  * @method     ChildMailjetNewsletter findOneByMailjetId(string $mailjet_id) Return the first ChildMailjetNewsletter filtered by the mailjet_id column
  * @method     ChildMailjetNewsletter findOneByEmail(string $email) Return the first ChildMailjetNewsletter filtered by the email column
- * @method     ChildMailjetNewsletter findOneByRelationId(int $relation_id) Return the first ChildMailjetNewsletter filtered by the relation_id column
+ * @method     ChildMailjetNewsletter findOneByRelationId(string $relation_id) Return the first ChildMailjetNewsletter filtered by the relation_id column
  *
  * @method     array findById(int $id) Return ChildMailjetNewsletter objects filtered by the id column
  * @method     array findByMailjetId(string $mailjet_id) Return ChildMailjetNewsletter objects filtered by the mailjet_id column
  * @method     array findByEmail(string $email) Return ChildMailjetNewsletter objects filtered by the email column
- * @method     array findByRelationId(int $relation_id) Return ChildMailjetNewsletter objects filtered by the relation_id column
+ * @method     array findByRelationId(string $relation_id) Return ChildMailjetNewsletter objects filtered by the relation_id column
  *
  */
 abstract class MailjetNewsletterQuery extends ModelCriteria
@@ -325,36 +325,24 @@ abstract class MailjetNewsletterQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByRelationId(1234); // WHERE relation_id = 1234
-     * $query->filterByRelationId(array(12, 34)); // WHERE relation_id IN (12, 34)
-     * $query->filterByRelationId(array('min' => 12)); // WHERE relation_id > 12
+     * $query->filterByRelationId('fooValue');   // WHERE relation_id = 'fooValue'
+     * $query->filterByRelationId('%fooValue%'); // WHERE relation_id LIKE '%fooValue%'
      * </code>
      *
-     * @param     mixed $relationId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $relationId The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return ChildMailjetNewsletterQuery The current query, for fluid interface
      */
     public function filterByRelationId($relationId = null, $comparison = null)
     {
-        if (is_array($relationId)) {
-            $useMinMax = false;
-            if (isset($relationId['min'])) {
-                $this->addUsingAlias(MailjetNewsletterTableMap::RELATION_ID, $relationId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($relationId['max'])) {
-                $this->addUsingAlias(MailjetNewsletterTableMap::RELATION_ID, $relationId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
+        if (null === $comparison) {
+            if (is_array($relationId)) {
                 $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $relationId)) {
+                $relationId = str_replace('*', '%', $relationId);
+                $comparison = Criteria::LIKE;
             }
         }
 
