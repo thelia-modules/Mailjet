@@ -104,6 +104,13 @@
             {form_hidden_fields}
 
             <form action="{url path="/admin/module/Mailjet/contact-list/update/{$ID_CL}"}" method="post" id="updateForm-{$ID_CL}">
+            {form_hidden_fields}
+
+            {if $form_error}<div class="alert alert-danger">{$form_error_message}</div>{/if}
+
+            {form_field form=$form field='success_url'}
+            <input type="hidden" name="{$name}" value="{url path="/admin/module/Mailjet"}}"/>
+            {/form_field}
             <tr>
                 <td><input value={$ID_CL} type="hidden">{$ID_CL}</td>
                 <td>
