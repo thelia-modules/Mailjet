@@ -8,4 +8,18 @@
     <route id="mailjet.save" path="/admin/module/Mailjet" methods="post">
         <default key="_controller">Mailjet\Controller\MailjetConfigController::saveAction</default>
     </route>
+    <route id="mailjet.add.contact.list" path="/admin/module/Mailjet/contact-list/add" methods="post">
+        <default key="_controller">Mailjet\Controller\MailjetConfigController::addContactListAction</default>
+    </route>
+    <route id="mailjet.update.contact.list" path="/admin/module/Mailjet/contact-list/update/{id}" methods="post">
+        <default key="_controller">Mailjet\Controller\MailjetConfigController::updateContactListAction</default>
+        <requirement key="id">\d+</requirement>
+    </route>
+    <route id="mailjet.del.contact.list" path="/admin/module/Mailjet/contact-list/delete">
+        <default key="_controller">Mailjet\Controller\MailjetConfigController::deleteContactAction</default>
+    </route>
+    <route id="mailjet.set.default.contact.list" path="/admin/module/Mailjet/contact-list/set-default">
+        <default key="_controller">Mailjet\Controller\MailjetConfigController::setDefaultContactAction</default>
+    </route>
+
 </routes>

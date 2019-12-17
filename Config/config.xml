@@ -6,12 +6,21 @@
 
     <forms>
         <form name="mailjet.configuration" class="Mailjet\Form\MailjetConfigurationForm" />
+        <form name="mailjet.contact.list" class="Mailjet\Form\MailjetContactListConfigurationForm" />
     </forms>
 
+    <loops>
+        <loop name="contact.list.loop" class="Mailjet\loop\MailjetContactListLoop" />
+    </loops>
+
     <services>
+        <service id="contact.list" class="Mailjet\Service\ContactListService">
+        </service>
+
         <service id="action.mailjet.newsletter" class="Mailjet\EventListeners\NewsletterListener">
             <argument type="service" id="thelia.translator" />
-
+            <argument type="service" id="request" />
+            <argument type="service" id="contact.list" />
             <tag name="kernel.event_subscriber" />
         </service>
     </services>

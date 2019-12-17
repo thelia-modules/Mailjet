@@ -2,8 +2,8 @@
 
 namespace Mailjet\Model\Map;
 
-use Mailjet\Model\MailjetNewsletter;
-use Mailjet\Model\MailjetNewsletterQuery;
+use Mailjet\Model\MailjetContactList;
+use Mailjet\Model\MailjetContactListQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'mailjet_newsletter' table.
+ * This class defines the structure of the 'mailjet_contact_list' table.
  *
  *
  *
@@ -26,14 +26,14 @@ use Propel\Runtime\Map\TableMapTrait;
  * (i.e. if it's a text column type).
  *
  */
-class MailjetNewsletterTableMap extends TableMap
+class MailjetContactListTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'Mailjet.Model.Map.MailjetNewsletterTableMap';
+    const CLASS_NAME = 'Mailjet.Model.Map.MailjetContactListTableMap';
 
     /**
      * The default database name for this class
@@ -43,22 +43,22 @@ class MailjetNewsletterTableMap extends TableMap
     /**
      * The table name for this class
      */
-    const TABLE_NAME = 'mailjet_newsletter';
+    const TABLE_NAME = 'mailjet_contact_list';
 
     /**
      * The related Propel class for this table
      */
-    const OM_CLASS = '\\Mailjet\\Model\\MailjetNewsletter';
+    const OM_CLASS = '\\Mailjet\\Model\\MailjetContactList';
 
     /**
      * A class that can be returned by this tableMap
      */
-    const CLASS_DEFAULT = 'Mailjet.Model.MailjetNewsletter';
+    const CLASS_DEFAULT = 'Mailjet.Model.MailjetContactList';
 
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /**
      * The number of lazy-loaded columns
@@ -68,27 +68,32 @@ class MailjetNewsletterTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 5;
 
     /**
-     * the column name for the ID field
+     * the column name for the ID_CL field
      */
-    const ID = 'mailjet_newsletter.ID';
+    const ID_CL = 'mailjet_contact_list.ID_CL';
 
     /**
-     * the column name for the MAILJET_ID field
+     * the column name for the NAME_CL field
      */
-    const MAILJET_ID = 'mailjet_newsletter.MAILJET_ID';
+    const NAME_CL = 'mailjet_contact_list.NAME_CL';
 
     /**
-     * the column name for the EMAIL field
+     * the column name for the SLUG_CL field
      */
-    const EMAIL = 'mailjet_newsletter.EMAIL';
+    const SLUG_CL = 'mailjet_contact_list.SLUG_CL';
 
     /**
-     * the column name for the RELATION_ID field
+     * the column name for the LOCALE field
      */
-    const RELATION_ID = 'mailjet_newsletter.RELATION_ID';
+    const LOCALE = 'mailjet_contact_list.LOCALE';
+
+    /**
+     * the column name for the DEFAULT_LIST field
+     */
+    const DEFAULT_LIST = 'mailjet_contact_list.DEFAULT_LIST';
 
     /**
      * The default string format for model objects of the related table
@@ -102,12 +107,12 @@ class MailjetNewsletterTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('Id', 'MailjetId', 'Email', 'RelationId', ),
-        self::TYPE_STUDLYPHPNAME => array('id', 'mailjetId', 'email', 'relationId', ),
-        self::TYPE_COLNAME       => array(MailjetNewsletterTableMap::ID, MailjetNewsletterTableMap::MAILJET_ID, MailjetNewsletterTableMap::EMAIL, MailjetNewsletterTableMap::RELATION_ID, ),
-        self::TYPE_RAW_COLNAME   => array('ID', 'MAILJET_ID', 'EMAIL', 'RELATION_ID', ),
-        self::TYPE_FIELDNAME     => array('id', 'mailjet_id', 'email', 'relation_id', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('IdCl', 'NameCl', 'SlugCl', 'Locale', 'DefaultList', ),
+        self::TYPE_STUDLYPHPNAME => array('idCl', 'nameCl', 'slugCl', 'locale', 'defaultList', ),
+        self::TYPE_COLNAME       => array(MailjetContactListTableMap::ID_CL, MailjetContactListTableMap::NAME_CL, MailjetContactListTableMap::SLUG_CL, MailjetContactListTableMap::LOCALE, MailjetContactListTableMap::DEFAULT_LIST, ),
+        self::TYPE_RAW_COLNAME   => array('ID_CL', 'NAME_CL', 'SLUG_CL', 'LOCALE', 'DEFAULT_LIST', ),
+        self::TYPE_FIELDNAME     => array('id_cl', 'name_cl', 'slug_cl', 'locale', 'default_list', ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -117,12 +122,12 @@ class MailjetNewsletterTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('Id' => 0, 'MailjetId' => 1, 'Email' => 2, 'RelationId' => 3, ),
-        self::TYPE_STUDLYPHPNAME => array('id' => 0, 'mailjetId' => 1, 'email' => 2, 'relationId' => 3, ),
-        self::TYPE_COLNAME       => array(MailjetNewsletterTableMap::ID => 0, MailjetNewsletterTableMap::MAILJET_ID => 1, MailjetNewsletterTableMap::EMAIL => 2, MailjetNewsletterTableMap::RELATION_ID => 3, ),
-        self::TYPE_RAW_COLNAME   => array('ID' => 0, 'MAILJET_ID' => 1, 'EMAIL' => 2, 'RELATION_ID' => 3, ),
-        self::TYPE_FIELDNAME     => array('id' => 0, 'mailjet_id' => 1, 'email' => 2, 'relation_id' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('IdCl' => 0, 'NameCl' => 1, 'SlugCl' => 2, 'Locale' => 3, 'DefaultList' => 4, ),
+        self::TYPE_STUDLYPHPNAME => array('idCl' => 0, 'nameCl' => 1, 'slugCl' => 2, 'locale' => 3, 'defaultList' => 4, ),
+        self::TYPE_COLNAME       => array(MailjetContactListTableMap::ID_CL => 0, MailjetContactListTableMap::NAME_CL => 1, MailjetContactListTableMap::SLUG_CL => 2, MailjetContactListTableMap::LOCALE => 3, MailjetContactListTableMap::DEFAULT_LIST => 4, ),
+        self::TYPE_RAW_COLNAME   => array('ID_CL' => 0, 'NAME_CL' => 1, 'SLUG_CL' => 2, 'LOCALE' => 3, 'DEFAULT_LIST' => 4, ),
+        self::TYPE_FIELDNAME     => array('id_cl' => 0, 'name_cl' => 1, 'slug_cl' => 2, 'locale' => 3, 'default_list' => 4, ),
+        self::TYPE_NUM           => array(0, 1, 2, 3, 4, )
     );
 
     /**
@@ -135,16 +140,17 @@ class MailjetNewsletterTableMap extends TableMap
     public function initialize()
     {
         // attributes
-        $this->setName('mailjet_newsletter');
-        $this->setPhpName('MailjetNewsletter');
-        $this->setClassName('\\Mailjet\\Model\\MailjetNewsletter');
+        $this->setName('mailjet_contact_list');
+        $this->setPhpName('MailjetContactList');
+        $this->setClassName('\\Mailjet\\Model\\MailjetContactList');
         $this->setPackage('Mailjet.Model');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('MAILJET_ID', 'MailjetId', 'VARCHAR', true, 255, null);
-        $this->addColumn('EMAIL', 'Email', 'VARCHAR', true, 255, null);
-        $this->addColumn('RELATION_ID', 'RelationId', 'VARCHAR', false, 255, null);
+        $this->addPrimaryKey('ID_CL', 'IdCl', 'INTEGER', true, null, null);
+        $this->addColumn('NAME_CL', 'NameCl', 'VARCHAR', true, 255, null);
+        $this->addColumn('SLUG_CL', 'SlugCl', 'VARCHAR', true, 255, null);
+        $this->addColumn('LOCALE', 'Locale', 'VARCHAR', true, 255, null);
+        $this->addColumn('DEFAULT_LIST', 'DefaultList', 'BOOLEAN', true, 1, null);
     } // initialize()
 
     /**
@@ -168,11 +174,11 @@ class MailjetNewsletterTableMap extends TableMap
     public static function getPrimaryKeyHashFromRow($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
         // If the PK cannot be derived from the row, return NULL.
-        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)] === null) {
+        if ($row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('IdCl', TableMap::TYPE_PHPNAME, $indexType)] === null) {
             return null;
         }
 
-        return (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+        return (string) $row[TableMap::TYPE_NUM == $indexType ? 0 + $offset : static::translateFieldName('IdCl', TableMap::TYPE_PHPNAME, $indexType)];
     }
 
     /**
@@ -193,7 +199,7 @@ class MailjetNewsletterTableMap extends TableMap
             return (int) $row[
                             $indexType == TableMap::TYPE_NUM
                             ? 0 + $offset
-                            : self::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)
+                            : self::translateFieldName('IdCl', TableMap::TYPE_PHPNAME, $indexType)
                         ];
     }
 
@@ -210,7 +216,7 @@ class MailjetNewsletterTableMap extends TableMap
      */
     public static function getOMClass($withPrefix = true)
     {
-        return $withPrefix ? MailjetNewsletterTableMap::CLASS_DEFAULT : MailjetNewsletterTableMap::OM_CLASS;
+        return $withPrefix ? MailjetContactListTableMap::CLASS_DEFAULT : MailjetContactListTableMap::OM_CLASS;
     }
 
     /**
@@ -224,21 +230,21 @@ class MailjetNewsletterTableMap extends TableMap
      *
      * @throws PropelException Any exceptions caught during processing will be
      *         rethrown wrapped into a PropelException.
-     * @return array (MailjetNewsletter object, last column rank)
+     * @return array (MailjetContactList object, last column rank)
      */
     public static function populateObject($row, $offset = 0, $indexType = TableMap::TYPE_NUM)
     {
-        $key = MailjetNewsletterTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = MailjetNewsletterTableMap::getInstanceFromPool($key))) {
+        $key = MailjetContactListTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = MailjetContactListTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + MailjetNewsletterTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + MailjetContactListTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = MailjetNewsletterTableMap::OM_CLASS;
+            $cls = MailjetContactListTableMap::OM_CLASS;
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            MailjetNewsletterTableMap::addInstanceToPool($obj, $key);
+            MailjetContactListTableMap::addInstanceToPool($obj, $key);
         }
 
         return array($obj, $col);
@@ -261,8 +267,8 @@ class MailjetNewsletterTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = MailjetNewsletterTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = MailjetNewsletterTableMap::getInstanceFromPool($key))) {
+            $key = MailjetContactListTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = MailjetContactListTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
@@ -271,7 +277,7 @@ class MailjetNewsletterTableMap extends TableMap
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                MailjetNewsletterTableMap::addInstanceToPool($obj, $key);
+                MailjetContactListTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -292,15 +298,17 @@ class MailjetNewsletterTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, $alias = null)
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(MailjetNewsletterTableMap::ID);
-            $criteria->addSelectColumn(MailjetNewsletterTableMap::MAILJET_ID);
-            $criteria->addSelectColumn(MailjetNewsletterTableMap::EMAIL);
-            $criteria->addSelectColumn(MailjetNewsletterTableMap::RELATION_ID);
+            $criteria->addSelectColumn(MailjetContactListTableMap::ID_CL);
+            $criteria->addSelectColumn(MailjetContactListTableMap::NAME_CL);
+            $criteria->addSelectColumn(MailjetContactListTableMap::SLUG_CL);
+            $criteria->addSelectColumn(MailjetContactListTableMap::LOCALE);
+            $criteria->addSelectColumn(MailjetContactListTableMap::DEFAULT_LIST);
         } else {
-            $criteria->addSelectColumn($alias . '.ID');
-            $criteria->addSelectColumn($alias . '.MAILJET_ID');
-            $criteria->addSelectColumn($alias . '.EMAIL');
-            $criteria->addSelectColumn($alias . '.RELATION_ID');
+            $criteria->addSelectColumn($alias . '.ID_CL');
+            $criteria->addSelectColumn($alias . '.NAME_CL');
+            $criteria->addSelectColumn($alias . '.SLUG_CL');
+            $criteria->addSelectColumn($alias . '.LOCALE');
+            $criteria->addSelectColumn($alias . '.DEFAULT_LIST');
         }
     }
 
@@ -313,7 +321,7 @@ class MailjetNewsletterTableMap extends TableMap
      */
     public static function getTableMap()
     {
-        return Propel::getServiceContainer()->getDatabaseMap(MailjetNewsletterTableMap::DATABASE_NAME)->getTable(MailjetNewsletterTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(MailjetContactListTableMap::DATABASE_NAME)->getTable(MailjetContactListTableMap::TABLE_NAME);
     }
 
     /**
@@ -321,16 +329,16 @@ class MailjetNewsletterTableMap extends TableMap
      */
     public static function buildTableMap()
     {
-      $dbMap = Propel::getServiceContainer()->getDatabaseMap(MailjetNewsletterTableMap::DATABASE_NAME);
-      if (!$dbMap->hasTable(MailjetNewsletterTableMap::TABLE_NAME)) {
-        $dbMap->addTableObject(new MailjetNewsletterTableMap());
+      $dbMap = Propel::getServiceContainer()->getDatabaseMap(MailjetContactListTableMap::DATABASE_NAME);
+      if (!$dbMap->hasTable(MailjetContactListTableMap::TABLE_NAME)) {
+        $dbMap->addTableObject(new MailjetContactListTableMap());
       }
     }
 
     /**
-     * Performs a DELETE on the database, given a MailjetNewsletter or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a MailjetContactList or Criteria object OR a primary key value.
      *
-     * @param mixed               $values Criteria or MailjetNewsletter object or primary key or array of primary keys
+     * @param mixed               $values Criteria or MailjetContactList object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -341,25 +349,25 @@ class MailjetNewsletterTableMap extends TableMap
      public static function doDelete($values, ConnectionInterface $con = null)
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(MailjetNewsletterTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(MailjetContactListTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Mailjet\Model\MailjetNewsletter) { // it's a model object
+        } elseif ($values instanceof \Mailjet\Model\MailjetContactList) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(MailjetNewsletterTableMap::DATABASE_NAME);
-            $criteria->add(MailjetNewsletterTableMap::ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(MailjetContactListTableMap::DATABASE_NAME);
+            $criteria->add(MailjetContactListTableMap::ID_CL, (array) $values, Criteria::IN);
         }
 
-        $query = MailjetNewsletterQuery::create()->mergeWith($criteria);
+        $query = MailjetContactListQuery::create()->mergeWith($criteria);
 
-        if ($values instanceof Criteria) { MailjetNewsletterTableMap::clearInstancePool();
+        if ($values instanceof Criteria) { MailjetContactListTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
-            foreach ((array) $values as $singleval) { MailjetNewsletterTableMap::removeInstanceFromPool($singleval);
+            foreach ((array) $values as $singleval) { MailjetContactListTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -367,20 +375,20 @@ class MailjetNewsletterTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the mailjet_newsletter table.
+     * Deletes all rows from the mailjet_contact_list table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(ConnectionInterface $con = null)
     {
-        return MailjetNewsletterQuery::create()->doDeleteAll($con);
+        return MailjetContactListQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a MailjetNewsletter or Criteria object.
+     * Performs an INSERT on the database, given a MailjetContactList or Criteria object.
      *
-     * @param mixed               $criteria Criteria or MailjetNewsletter object containing data that is used to create the INSERT statement.
+     * @param mixed               $criteria Criteria or MailjetContactList object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed           The new primary key.
      * @throws PropelException Any exceptions caught during processing will be
@@ -389,22 +397,22 @@ class MailjetNewsletterTableMap extends TableMap
     public static function doInsert($criteria, ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(MailjetNewsletterTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(MailjetContactListTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from MailjetNewsletter object
+            $criteria = $criteria->buildCriteria(); // build Criteria from MailjetContactList object
         }
 
-        if ($criteria->containsKey(MailjetNewsletterTableMap::ID) && $criteria->keyContainsValue(MailjetNewsletterTableMap::ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.MailjetNewsletterTableMap::ID.')');
+        if ($criteria->containsKey(MailjetContactListTableMap::ID_CL) && $criteria->keyContainsValue(MailjetContactListTableMap::ID_CL) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.MailjetContactListTableMap::ID_CL.')');
         }
 
 
         // Set the correct dbName
-        $query = MailjetNewsletterQuery::create()->mergeWith($criteria);
+        $query = MailjetContactListQuery::create()->mergeWith($criteria);
 
         try {
             // use transaction because $criteria could contain info
@@ -420,7 +428,7 @@ class MailjetNewsletterTableMap extends TableMap
         return $pk;
     }
 
-} // MailjetNewsletterTableMap
+} // MailjetContactListTableMap
 // This is the static code needed to register the TableMap for this table with the main Propel class.
 //
-MailjetNewsletterTableMap::buildTableMap();
+MailjetContactListTableMap::buildTableMap();
