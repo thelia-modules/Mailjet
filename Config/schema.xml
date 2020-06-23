@@ -4,7 +4,7 @@
         <column name="id" autoIncrement="true" type="INTEGER" required="true" primaryKey="true" />
         <column name="mailjet_id" type="VARCHAR" size="255" required="true" />
         <column name="email" type="VARCHAR" size="255" required="true" />
-        <column name="relation_id" type="INTEGER"/>
+        <column name="relation_id" type="VARCHAR" size="255" />
 
         <index name="idx_mailjet_newsletter_email">
             <index-column name="email" />

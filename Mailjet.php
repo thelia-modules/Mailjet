@@ -13,6 +13,7 @@
 namespace Mailjet;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Symfony\Component\Filesystem\Filesystem;
 use Thelia\Install\Database;
 use Thelia\Model\Config;
 use Thelia\Model\ConfigQuery;
@@ -96,5 +97,25 @@ class Mailjet extends BaseModule
         }
 
         $config->save();
+    }
+
+
+    /**
+     * @param string $currentVersion
+     * @param string $newVersion
+     * @param ConnectionInterface $con
+     */
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
+    {
+        if ($newVersion === '1.3.2') {
+            $db = new Database($con);
+
+            $tableExists = $db->execute("SHOW TABLES LIKE 'mailjet_newsletter'")->rowCount();
+
+            if ($tableExists) {
+                // Le champ relation ID change de format.
+                $db->execute("ALTER TABLE `mailjet_newsletter` CHANGE `relation_id` `relation_id` varchar(255) NOT NULL AFTER `email`");
+            }
+        }
     }
 }
