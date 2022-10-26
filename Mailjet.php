@@ -34,7 +34,7 @@ class Mailjet extends BaseModule
     const CONFIG_API_WS_ADDRESS = "mail.api.webservice_address";
     const CONFIG_THROW_EXCEPTION_ON_ERROR = "mailjet.throw_exception_on_error";
 
-    public function postActivation(ConnectionInterface $con = null)
+    public function postActivation(ConnectionInterface $con = null): void
     {
         $con->beginTransaction();
 
@@ -105,7 +105,7 @@ class Mailjet extends BaseModule
      * @param string $newVersion
      * @param ConnectionInterface $con
      */
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
     {
         if ($newVersion === '1.3.2') {
             $db = new Database($con);

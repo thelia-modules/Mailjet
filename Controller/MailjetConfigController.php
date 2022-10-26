@@ -15,7 +15,9 @@ namespace Mailjet\Controller;
 use Mailjet\Form\MailjetConfigurationForm;
 use Mailjet\Mailjet;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Thelia\Controller\Admin\BaseAdminController;
+use Thelia\Core\Template\ParserContext;
 use Thelia\Model\ConfigQuery;
 use Thelia\Tools\URL;
 
@@ -26,9 +28,9 @@ use Thelia\Tools\URL;
  */
 class MailjetConfigController extends BaseAdminController
 {
-    public function saveAction()
+    public function saveAction(Request $request, ParserContext $parserContext)
     {
-        $baseForm = new MailjetConfigurationForm($this->getRequest());
+        $baseForm = $this->createForm(MailjetConfigurationForm::getName());
 
         try {
             $form = $this->validateForm($baseForm);
@@ -38,15 +40,15 @@ class MailjetConfigController extends BaseAdminController
             ConfigQuery::write(Mailjet::CONFIG_API_SECRET, $data["api_secret"]);
             ConfigQuery::write(Mailjet::CONFIG_API_WS_ADDRESS, $data["ws_address"]);
             ConfigQuery::write(Mailjet::CONFIG_NEWSLETTER_LIST, $data["newsletter_list"]);
-            ConfigQuery::write(Mailjet::CONFIG_THROW_EXCEPTION_ON_ERROR, $data["exception_on_errors"] ? true : false);
+            ConfigQuery::write(Mailjet::CONFIG_THROW_EXCEPTION_ON_ERROR, (bool)$data["exception_on_errors"]);
 
-            $this->getParserContext()->set("success", true);
+            $parserContext->set("success", true);
 
-            if ("close" === $this->getRequest()->request->get("save_mode")) {
+            if ("close" === $request->request->get("save_mode")) {
                 return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/modules"));
             }
         } catch (\Exception $e) {
-            $this->getParserContext()
+            $parserContext
                 ->setGeneralError($e->getMessage())
                 ->addForm($baseForm)
             ;

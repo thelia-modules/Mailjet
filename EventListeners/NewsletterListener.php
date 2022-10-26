@@ -12,15 +12,15 @@
 
 namespace Mailjet\EventListeners;
 
+use Mailjet\Api\MailjetClient;
 use Mailjet\Mailjet;
+use Mailjet\Mailjet as MailjetModule;
 use Mailjet\Model\MailjetNewsletter;
 use Mailjet\Model\MailjetNewsletterQuery;
-use Mailjet\Api\MailjetClient;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Translation\TranslatorInterface;
-use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Event\Newsletter\NewsletterEvent;
-use Mailjet\Mailjet as MailjetModule;
+use Thelia\Core\Event\TheliaEvents;
+use Thelia\Core\Translation\Translator;
 use Thelia\Log\Tlog;
 use Thelia\Model\ConfigQuery;
 use Thelia\Model\NewsletterQuery;
@@ -33,7 +33,7 @@ use Thelia\Model\NewsletterQuery;
 class NewsletterListener implements EventSubscriberInterface
 {
     /**
-     * @var TranslatorInterface
+     * @var Translator
      */
     protected $translator;
 
@@ -42,7 +42,7 @@ class NewsletterListener implements EventSubscriberInterface
      */
     protected $api;
 
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(Translator $translator)
     {
         $this->translator = $translator;
 
