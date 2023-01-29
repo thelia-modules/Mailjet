@@ -4,7 +4,7 @@
             {intl d="mailjet.bo.default" l="Configure mailjet"}
         </div>
 
-        {if $success}
+        {if $success|default:false}
         <div class="alert alert-success">
             {intl l="Configuration correctly saved" d="mailjet.bo.default"}
         </div>
