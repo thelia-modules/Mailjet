@@ -16,6 +16,8 @@ use Mailjet\Form\MailjetConfigurationForm;
 use Mailjet\Mailjet;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Template\ParserContext;
 use Thelia\Model\ConfigQuery;
@@ -26,9 +28,17 @@ use Thelia\Tools\URL;
  * @package Mailjet\Controller
  * @author Benjamin Perche <bperche@openstudio.com>
  */
+#[Route('/admin/module/Mailjet', name: 'mailjet_config')]
 class MailjetConfigController extends BaseAdminController
 {
-    public function saveAction(Request $request, ParserContext $parserContext)
+    #[Route('', name: '_index', methods: ['GET'])]
+    public function indexAction(): Response
+    {
+        return $this->render('mailjet-configuration');
+    }
+
+    #[Route('', name: '_save', methods: ['POST'])]
+    public function saveAction(Request $request, ParserContext $parserContext): RedirectResponse|Response
     {
         $baseForm = $this->createForm(MailjetConfigurationForm::getName());
 
@@ -47,6 +57,8 @@ class MailjetConfigController extends BaseAdminController
             if ("close" === $request->request->get("save_mode")) {
                 return new RedirectResponse(URL::getInstance()->absoluteUrl("/admin/modules"));
             }
+
+            return $this->generateSuccessRedirect($baseForm);
         } catch (\Exception $e) {
             $parserContext
                 ->setGeneralError($e->getMessage())
@@ -54,6 +66,6 @@ class MailjetConfigController extends BaseAdminController
             ;
         }
 
-        return $this->render('module-configure', [ 'module_code' => 'Mailjet' ]);
+        return $this->generateErrorRedirect($baseForm);
     }
 }
