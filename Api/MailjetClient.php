@@ -36,7 +36,7 @@ class MailjetClient
         $this->auth = sprintf("%s:%s", $apiKey, $apiSecret);
     }
 
-    protected function initilize($address)
+    protected function initilize($address): void
     {
         /**
          * Initialize connection
@@ -48,7 +48,7 @@ class MailjetClient
         ]);
     }
 
-    public function get($resource, $id = null, array $params = array())
+    public function get($resource, $id = null, array $params = array()): array
     {
         $address = $this->lazyBuildAddress($resource, $id, $params);
 
@@ -56,9 +56,9 @@ class MailjetClient
         return $this->getResponse();
     }
 
-    public function post($resource, array $params = array())
+    public function post($resource, array $params = array()): array
     {
-        $address = $this->lazyBuildAddress($resource, null, []);
+        $address = $this->lazyBuildAddress($resource);
 
         $this->initilize($address);
         $this->initializePostFields($params);
@@ -68,9 +68,9 @@ class MailjetClient
         return $this->getResponse();
     }
 
-    public function put($resource, $id, array $params = array())
+    public function put($resource, $id, array $params = array()): array
     {
-        $address = $this->lazyBuildAddress($resource, $id, []);
+        $address = $this->lazyBuildAddress($resource, $id);
 
         $this->initilize($address);
         $this->initializePostFields($params);
@@ -80,7 +80,7 @@ class MailjetClient
         return $this->getResponse();
     }
 
-    public function delete($resource, $id, array $params = array())
+    public function delete($resource, $id, array $params = array()): array
     {
         $address = $this->lazyBuildAddress($resource, $id, $params);
 
@@ -91,7 +91,7 @@ class MailjetClient
         return $this->getResponse();
     }
 
-    protected function initializePostFields(array $params)
+    protected function initializePostFields(array $params): void
     {
         // sanitize
         $string = '';
@@ -105,20 +105,20 @@ class MailjetClient
         curl_setopt($this->curlHandler, CURLOPT_POSTFIELDS, $string);
     }
 
-    protected function getResponse()
+    protected function getResponse(): array
     {
         $response = curl_exec($this->curlHandler);
         $code = curl_getinfo($this->curlHandler, CURLINFO_HTTP_CODE);
-    
+
         $error = curl_error($this->curlHandler);
         $errno = curl_errno($this->curlHandler);
-    
+
         curl_close($this->curlHandler);
-    
+
         return [$code, $response ?: $error . " (errno $errno)"];
     }
 
-    protected function lazyBuildAddress($resource, $id = null, $params = array())
+    protected function lazyBuildAddress($resource, $id = null, $params = array()): string
     {
         $address = sprintf("%s/%s", $this->wsAddress, $resource);
 

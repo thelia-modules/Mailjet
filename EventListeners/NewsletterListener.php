@@ -17,6 +17,7 @@ use Mailjet\Mailjet;
 use Mailjet\Mailjet as MailjetModule;
 use Mailjet\Model\MailjetNewsletter;
 use Mailjet\Model\MailjetNewsletterQuery;
+use Propel\Runtime\Exception\PropelException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Thelia\Core\Event\Newsletter\NewsletterEvent;
 use Thelia\Core\Event\TheliaEvents;
@@ -54,7 +55,10 @@ class NewsletterListener implements EventSubscriberInterface
         );
     }
 
-    public function subscribe(NewsletterEvent $event)
+    /**
+     * @throws PropelException
+     */
+    public function subscribe(NewsletterEvent $event): void
     {
         // Create contact
         if (null !== $model = $this->apiAddUser($event, "registration")) {
@@ -63,7 +67,10 @@ class NewsletterListener implements EventSubscriberInterface
         }
     }
 
-    public function update(NewsletterEvent $event)
+    /**
+     * @throws PropelException
+     */
+    public function update(NewsletterEvent $event): void
     {
         $previousEmail = NewsletterQuery::create()->findPk($event->getId())->getEmail();
 
@@ -85,7 +92,7 @@ class NewsletterListener implements EventSubscriberInterface
                 ) {
                     // Reset relation ID.
                     $model
-                        ->setRelationId(null)
+                        ->setRelationId()
                         ->save();
                     /**
                      * Then create a new client
@@ -96,7 +103,7 @@ class NewsletterListener implements EventSubscriberInterface
         }
     }
 
-    public function unsubscribe(NewsletterEvent $event)
+    public function unsubscribe(NewsletterEvent $event): void
     {
         if (null !== $model = MailjetNewsletterQuery::create()->findOneByEmail($event->getEmail())) {
             // Remove the contact from the contact list. The contact will still exist in Mailjet
@@ -116,7 +123,10 @@ class NewsletterListener implements EventSubscriberInterface
         }
     }
 
-    protected function apiAddContactList(NewsletterEvent $event, MailjetNewsletter $model)
+    /**
+     * @throws PropelException
+     */
+    protected function apiAddContactList(NewsletterEvent $event, MailjetNewsletter $model): void
     {
         $params = [
             "IsActive" => "True",
@@ -159,7 +169,10 @@ class NewsletterListener implements EventSubscriberInterface
         }
     }
 
-    protected function apiAddUser(NewsletterEvent $event, $function)
+    /**
+     * @throws PropelException
+     */
+    protected function apiAddUser(NewsletterEvent $event, $function): ?MailjetNewsletter
     {
         // Check if the email is already registred
         $model = MailjetNewsletterQuery::create()->findOneByEmail($event->getEmail());
@@ -198,12 +211,12 @@ class NewsletterListener implements EventSubscriberInterface
         return $model;
     }
 
-    protected function isStatusOk($status)
+    protected function isStatusOk($status): bool
     {
         return $status >= 200 && $status < 300;
     }
 
-    protected function logAfterAction($successMessage, $errorMessage, $status, $data)
+    protected function logAfterAction($successMessage, $errorMessage, $status, $data): bool
     {
         if ($this->isStatusOk($status)) {
             Tlog::getInstance()->info($successMessage);
@@ -226,7 +239,7 @@ class NewsletterListener implements EventSubscriberInterface
         }
     }
 
-    protected function getEmailFromEvent(NewsletterEvent $event)
+    protected function getEmailFromEvent(NewsletterEvent $event): ?string
     {
         return NewsletterQuery::create()->findPk($event->getId())->getEmail();
     }
@@ -251,7 +264,7 @@ class NewsletterListener implements EventSubscriberInterface
      *
      * @api
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(
             TheliaEvents::NEWSLETTER_SUBSCRIBE => array("subscribe", 192), // Come before, as if it crashes, it won't be saved by thelia

@@ -13,9 +13,9 @@
 namespace Mailjet;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Propel\Runtime\Exception\PropelException;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
-use Symfony\Component\Filesystem\Filesystem;
-use Thelia\Install\Database;
+use Thelia\Core\Install\Database;
 use Thelia\Model\Config;
 use Thelia\Model\ConfigQuery;
 use Thelia\Module\BaseModule;
@@ -35,6 +35,9 @@ class Mailjet extends BaseModule
     const CONFIG_API_WS_ADDRESS = "mail.api.webservice_address";
     const CONFIG_THROW_EXCEPTION_ON_ERROR = "mailjet.throw_exception_on_error";
 
+    /**
+     * @throws PropelException
+     */
     public function postActivation(ConnectionInterface $con = null): void
     {
         $con->beginTransaction();
@@ -83,7 +86,10 @@ class Mailjet extends BaseModule
         }
     }
 
-    protected function createConfigValue($name, array $translation, $value = '')
+    /**
+     * @throws PropelException
+     */
+    protected function createConfigValue($name, array $translation, $value = ''): void
     {
         $config = new Config();
         $config
@@ -104,7 +110,7 @@ class Mailjet extends BaseModule
     /**
      * @param string $currentVersion
      * @param string $newVersion
-     * @param ConnectionInterface $con
+     * @param ConnectionInterface|null $con
      */
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
     {
@@ -123,7 +129,7 @@ class Mailjet extends BaseModule
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
         $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
+            ->exclude([THELIA_LOCAL_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
             ->autowire(true)
             ->autoconfigure(true);
     }

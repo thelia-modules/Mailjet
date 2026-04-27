@@ -17,10 +17,17 @@ use Thelia\Core\Hook\BaseHook;
 
 class HookManager extends BaseHook
 {
-    public function onModuleConfiguration(HookRenderEvent $event)
+    public function onModuleConfiguration(HookRenderEvent $event): void
     {
         $event->add(
             $this->render("mailjet-configuration.html")
         );
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            'module.configuration' => ['type' => 'back', 'method' => 'onModuleConfiguration'],
+        ];
     }
 }
