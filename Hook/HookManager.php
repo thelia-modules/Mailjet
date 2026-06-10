@@ -12,22 +12,41 @@
 
 namespace Mailjet\Hook;
 
+use Mailjet\Form\MailjetConfigurationForm;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Hook\HookRenderEvent;
+use Thelia\Core\Form\TheliaFormFactory;
 use Thelia\Core\Hook\BaseHook;
+use Thelia\Core\Template\Parser\ParserResolver;
 
 class HookManager extends BaseHook
 {
+    public function __construct(
+        private readonly TheliaFormFactory $formFactory,
+        ?EventDispatcherInterface $dispatcher = null,
+        ?ParserResolver $parserResolver = null,
+    ) {
+        parent::__construct($dispatcher, $parserResolver);
+    }
+
     public function onModuleConfiguration(HookRenderEvent $event): void
     {
+        $form = $this->formFactory->createForm(MailjetConfigurationForm::getName());
+        $form->createView();
+
         $event->add(
-            $this->render("mailjet-configuration.html")
+            $this->render('Mailjet/mailjet-configuration.html.twig', [
+                'form' => $form->getView(),
+            ])
         );
     }
 
-    public static function getSubscribedEvents(): array
+    public static function getSubscribedHooks(): array
     {
         return [
-            'module.configuration' => ['type' => 'back', 'method' => 'onModuleConfiguration'],
+            'module.configuration' => [
+                ['type' => 'back', 'method' => 'onModuleConfiguration'],
+            ],
         ];
     }
 }

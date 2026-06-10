@@ -1,0 +1,62 @@
+{# Mailjet module configuration — hook fragment, no extends #}
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="card-title mb-0">{{ 'Configure mailjet'|trans({}, 'mailjet.bo.default') }}</h5>
+    </div>
+    <div class="card-body">
+        {{ form_start(form, {action: path('mailjet_config_save'), method: 'post'}) }}
+
+        <div class="mb-3">
+            {{ form_label(form.api_key) }}
+            {{ form_widget(form.api_key, {attr: {class: 'form-control' ~ (form.api_key.vars.errors|length ? ' is-invalid' : '')}}) }}
+            {{ form_errors(form.api_key) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.api_secret) }}
+            {{ form_widget(form.api_secret, {attr: {class: 'form-control' ~ (form.api_secret.vars.errors|length ? ' is-invalid' : '')}}) }}
+            {{ form_errors(form.api_secret) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.ws_address) }}
+            {{ form_widget(form.ws_address, {attr: {class: 'form-control' ~ (form.ws_address.vars.errors|length ? ' is-invalid' : '')}}) }}
+            {{ form_errors(form.ws_address) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.newsletter_list) }}
+            {{ form_widget(form.newsletter_list, {attr: {class: 'form-control' ~ (form.newsletter_list.vars.errors|length ? ' is-invalid' : '')}}) }}
+            {% if form.newsletter_list.vars.label_attr.help is defined %}
+                <div class="form-text">{{ form.newsletter_list.vars.label_attr.help }}</div>
+            {% endif %}
+            {{ form_errors(form.newsletter_list) }}
+        </div>
+
+        <div class="mb-3">
+            <div class="form-check">
+                {{ form_widget(form.exception_on_errors, {attr: {class: 'form-check-input'}}) }}
+                {{ form_label(form.exception_on_errors, null, {label_attr: {class: 'form-check-label'}}) }}
+            </div>
+            {% if form.exception_on_errors.vars.label_attr.help is defined %}
+                <div class="form-text">{{ form.exception_on_errors.vars.label_attr.help }}</div>
+            {% endif %}
+            {{ form_errors(form.exception_on_errors) }}
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i>
+                {{ 'Save'|trans({}, 'mailjet.bo.default') }}
+            </button>
+            <button type="submit" name="save_mode" value="close" class="btn btn-secondary">
+                {{ 'Save and close'|trans({}, 'mailjet.bo.default') }}
+            </button>
+            <a href="{{ path('admin.module') }}" class="btn btn-outline-secondary ms-auto">
+                {{ 'Cancel'|trans({}, 'mailjet.bo.default') }}
+            </a>
+        </div>
+
+        {{ form_end(form) }}
+    </div>
+</div>
