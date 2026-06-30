@@ -72,7 +72,11 @@ class NewsletterListener implements EventSubscriberInterface
      */
     public function update(NewsletterEvent $event): void
     {
-        $previousEmail = NewsletterQuery::create()->findPk($event->getId())->getEmail();
+        if (null === $newsletter = NewsletterQuery::create()->findPk($event->getId())) {
+            return;
+        }
+
+        $previousEmail = $newsletter->getEmail();
 
         if ($event->getEmail() !== $previousEmail) {
             if (null !== $model = MailjetNewsletterQuery::create()->findOneByEmail($previousEmail)) {
@@ -241,7 +245,11 @@ class NewsletterListener implements EventSubscriberInterface
 
     protected function getEmailFromEvent(NewsletterEvent $event): ?string
     {
-        return NewsletterQuery::create()->findPk($event->getId())->getEmail();
+        if (null === $newsletter = NewsletterQuery::create()->findPk($event->getId())) {
+            return null;
+        }
+
+        return $newsletter->getEmail();
     }
 
     /**
